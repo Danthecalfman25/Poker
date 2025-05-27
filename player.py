@@ -18,3 +18,5 @@ class Player():
                 if card.rank == com.rank:
                     return True
         return False
+    
+

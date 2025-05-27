@@ -4,5 +4,5 @@ class Card():
         self.rank = rank
         self.suit = suit
 
-    def displayCard(self):
+    def display(self):
         print(f"{self.rank}{self.suit}", end = " ")

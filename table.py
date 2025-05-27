@@ -5,3 +5,5 @@ class Table():
     def __init__(self):
         self.community =[]
     
+    def deal(self, card):
+        self.community.append(card)

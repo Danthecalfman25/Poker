@@ -20,8 +20,8 @@ class Deck(Card):
         self.deck.append[card]
         return card
     
-    def displayDeck(self):
+    def display(self):
         for card in self.deck:
-            card.displayCard()
+            card.display()
 
     
