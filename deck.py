@@ -22,7 +22,9 @@ class Deck():
             card.display()
 
     def deal(self, x):
+        dealtcards = []
         for i in range(x):
-            self.dealCard()
+            dealtcards.append(self.dealCard())
+        return dealtcards
             
     

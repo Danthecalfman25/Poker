@@ -1,3 +1,4 @@
+#player
 from card import *
 from deck import *
 from table import *
@@ -7,8 +8,9 @@ class Player():
         self.hand = [] 
         self.table = Table()
 
-    def receive(self, card):
-        self.hand.append(card)
+    def receive(self, cards):
+        for card in cards:
+            self.hand.append(card)
 
     def ispair(self):
         if (self.hand[0].rank == self.hand[1].rank):
@@ -19,7 +21,7 @@ class Player():
                     return True
         return False
     
-    def displayHand(self):
+    def display(self):
         for card in self.hand:
             card.display()
 
