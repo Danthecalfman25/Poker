@@ -1,7 +1,7 @@
 from card import Card
 import random
 
-class Deck(Card):
+class Deck():
     def __init__(self):
         suits = ['H', 'S', 'D', 'C']
         ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -14,14 +14,15 @@ class Deck(Card):
     def shuffle(self):
         random.shuffle(self.deck)
     
-    def deal(self):
-        card = self.deck[0]
-        self.deck.remove[0]
-        self.deck.append[card]
-        return card
+    def dealCard(self):
+        return self.deck.pop(0)
     
     def display(self):
         for card in self.deck:
             card.display()
 
+    def deal(self, x):
+        for i in range(x):
+            self.dealCard()
+            
     

@@ -7,7 +7,7 @@ class Player():
         self.hand = [] 
         self.table = Table()
 
-    def updateHand(self, card):
+    def receive(self, card):
         self.hand.append(card)
 
     def ispair(self):
@@ -19,4 +19,7 @@ class Player():
                     return True
         return False
     
+    def displayHand(self):
+        for card in self.hand:
+            card.display()
 

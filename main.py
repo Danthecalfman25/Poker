@@ -9,7 +9,18 @@ def main():
     deck = Deck()
     table = Table()
 
+    print("Original Deck:")
     deck.display()
+    print("\n")
     deck.shuffle()
+    print("Sorted deck:")
     deck.display()
-    
+    print("\n")
+    player.receive(deck.deal())
+    player.receive(deck.deal())
+    player.displayHand()
+    print("\n")
+    table.receive(deck.deal())
+    table.receive(deck.deal())
+
+main()
