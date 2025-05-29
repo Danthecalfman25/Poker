@@ -4,13 +4,15 @@ from deck import *
 from table import *
 
 class Player():
-    def __init__(self):
+    def __init__(self, name):
         self.hand = [] 
         self.table = Table()
+        self.name = name
 
-    def receive(self, cards):
+    def receive(self, cards, chips):
         for card in cards:
             self.hand.append(card)
+            self.chips = chips
 
     def ispair(self):
         if (self.hand[0].rank == self.hand[1].rank):
@@ -22,6 +24,9 @@ class Player():
         return False
     
     def display(self):
+        print(f"{self.name}'s cards:")
         for card in self.hand:
             card.display()
 
+    def displayChips(self):
+        print(self.chips)

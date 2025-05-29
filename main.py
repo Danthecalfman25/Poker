@@ -3,26 +3,29 @@ from card import *
 from player import *
 
 def preflop(player1, player2, deck, table):
-    print("Original Deck:")
-    deck.display()
-    print("\n")
+    #deal 2 card to each player
     deck.shuffle()
-    print("Sorted deck:")
-    deck.display()
-    print("\n")
+    print("Dealing:\n")
     player1.receive(deck.deal(2))
     player1.display()
     print("\n")
     player2.receive(deck.deal(2))
     player2.display()
     print("\n")
-    table.receive(deck.deal(3))
-    table.display()
+    #table.receive(deck.deal(3))
+    #table.display()
 
+def bettingRoundPreFlop():
+    choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
+    
+    if (choice == 1):
+        bet = input("Enter bet:")
+        
 def main():
     #deal 2 card to each player
-    player = Player()
-    computer = Player()
+    name = input("Enter name:")
+    player = Player(name)
+    computer = Player("computer")
     deck = Deck()
     table = Table()
     preflop(player, computer, deck, table)
