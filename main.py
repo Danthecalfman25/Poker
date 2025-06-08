@@ -15,14 +15,22 @@ def preflop(player1, player2, deck, table):
     #table.receive(deck.deal(3))
     #table.display()
 
-def bettingRoundPreFlop():
+def bettingRoundPreFlop(player):
     choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
     
     if (choice == 1):
+        player.displayChips()
         bet = input("Enter bet:")
+        player.updateBet(bet)
+        player.updateChips(-bet)
+        player.displayBet()
+        player.displayChips()
+        pass
+    if (choice == 2):
+        
+
         
 def main():
-    #deal 2 card to each player
     name = input("Enter name:")
     player = Player(name)
     computer = Player("computer")

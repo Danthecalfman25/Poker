@@ -5,7 +5,7 @@ class Table():
     def __init__(self):
         self.community =[]
         pot = 0
-        player
+        
     
     def receive(self, cards):
         for card in cards:
@@ -19,4 +19,3 @@ class Table():
     def updatePot(self, bet):
         self.pot += bet
     
-    def

@@ -8,6 +8,7 @@ class Player():
         self.hand = [] 
         self.table = Table()
         self.name = name
+        self.bet = 0
 
     def receive(self, cards, chips):
         for card in cards:
@@ -30,3 +31,12 @@ class Player():
 
     def displayChips(self):
         print(self.chips)
+
+    def updateChips(self, change):
+        self.chips += change
+    
+    def displayBet(self):
+        print(self.bet)
+
+    def updateBet(self, bet):
+        self.bet += bet
