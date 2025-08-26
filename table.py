@@ -4,6 +4,7 @@ from deck import *
 class Table():
     def __init__(self):
         self.community =[]
+        call_amount = 0
         pot = 0
         
     
@@ -18,4 +19,8 @@ class Table():
 
     def updatePot(self, bet):
         self.pot += bet
+
+    def updateCall_amount(self, bet):
+        self.call_amount += bet
+
     

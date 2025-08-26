@@ -9,6 +9,28 @@ class Player():
         self.table = Table()
         self.name = name
         self.bet = 0
+        self.total_hand = []
+
+    def find_hand(self):
+        for card in self.hand:
+            self.total_hand.append(card)
+        for card in self.table.community:
+            self.total_hand.append(card)
+        if isRoyal_Flush() == True:
+            return "Royal Flush"
+        if isStraight_Flush() != False:
+            return isStraight_Flush()
+        if isQuads() == True:
+            return "Straight_Flush"
+        if isFull_House() == True:
+            return "Full House"
+        if isFlush() == True:
+            return "Flush"
+        #find = isStraight()
+        #find = isTrips()
+        if isPair() == True:
+            return "Pair"
+
 
     def receive(self, cards, chips):
         for card in cards:
@@ -16,13 +38,19 @@ class Player():
             self.chips = chips
 
     def ispair(self):
-        if (self.hand[0].rank == self.hand[1].rank):
-            return True
-        for card in self.hand:
-            for com in self.table.community:
-                if card.rank == com.rank:
-                    return True
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                if self.total_hand[i] == self.total_hand[j]:
+                    return self.total_hand[i].rank
         return False
+    
+    def istrips(self):
+        if (self.hand):
+    
+    def isStraight():
+        return
+    
+    def is
     
     def display(self):
         print(f"{self.name}'s cards:")

@@ -15,7 +15,7 @@ def preflop(player1, player2, deck, table):
     #table.receive(deck.deal(3))
     #table.display()
 
-def bettingRoundPreFlop(player):
+def bettingRoundPreFlop(player, table):
     choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
     
     if (choice == 1):
@@ -25,8 +25,18 @@ def bettingRoundPreFlop(player):
         player.updateChips(-bet)
         player.displayBet()
         player.displayChips()
+        table.updateCall_amount()
         pass
     if (choice == 2):
+        player.displayChips()
+        bet = table.call_amount() - player.chips
+        player.updateBet(bet)
+        player.updateChips(-bet)
+        player.displayBet()
+        player.displayChips()
+    #if (choice == 3):
+
+
         
 
         
