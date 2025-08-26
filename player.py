@@ -45,7 +45,12 @@ class Player():
         return False
     
     def istrips(self):
-        if (self.hand):
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                for k in range(j+1, len(self.total_hand)):
+                    if self.total_hand[i] == self.total_hand[j] == self.total_hand[k]:
+                        return self.total_hand[j].rank
+        return False
     
     def isStraight():
         return
