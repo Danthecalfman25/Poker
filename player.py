@@ -53,6 +53,7 @@ class Player():
         return False
     
     def isStraight():
+        
         return
     
     def is

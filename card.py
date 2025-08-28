@@ -6,3 +6,6 @@ class Card():
 
     def display(self):
         print(f"{self.rank}{self.suit}", end = " ")
+
+    def __add__(self, value):
+        
