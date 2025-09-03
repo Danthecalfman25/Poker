@@ -53,11 +53,50 @@ class Player():
         return False
     
     def isStraight(self):
-        for card in self.total_hand:
-            if card + 1 in self.total_hand
-        return
+        self.total_hand.sort()
+
+        indices = sorted(set(Card.ranks.index(c.rank) for c in self.total_hand))
+
+        if Card.ranks.index("A") in indices:
+            indices.insert(0, -1)
+
+        count = 1
+        best_high = None
+        for i in range(1, len(indices)):
+            if indices[i] == indices[i - 1] + 1:
+                count += 1
+                if count >= 5:
+                    best_high = indices[i]  
+            else:
+                count = 1
+
+        if best_high is not None:
+            return Card.ranks[best_high]  
+        return None 
     
-    def is
+    def isFlush(self):
+        heart = 0
+        club = 0
+        spade = 0
+        diamond = 0
+        for card in self.total_hand:
+            if card.suit == "H":
+                heart += 1
+            if card.suit == "D":
+                diamond += 1
+            if card.suit == "S":
+                spade += 1
+            if card.suit == "C":
+                club += 1
+        if heart >= 5:
+            index = 0
+            for card in self.total_hand:
+                if card.suit == "H":
+                    index = max(index, self.ranks.index(card.rank))
+
+
+
+
     
     def display(self):
         print(f"{self.name}'s cards:")
