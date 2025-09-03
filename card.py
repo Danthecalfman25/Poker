@@ -21,6 +21,10 @@ class Card():
     def __add__(self, other):
         if isinstance(other, int):
             index = self.ranks.index(self.rank)
-            index += other
+            index = (index + 1) % len(self.ranks)
+            return Card(Card.ranks[index], self.suit)
         else:
             return TypeError
+    
+    def __radd__(self, value):
+        return self.__add__(value)
