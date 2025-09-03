@@ -1,6 +1,7 @@
 class Card():
     
     def __init__(self, rank, suit):
+        self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         self.rank = rank
         self.suit = suit
 
@@ -17,5 +18,9 @@ class Card():
         return False
     
     
-    def __add__(self, value):
-        
+    def __add__(self, other):
+        if isinstance(other, int):
+            index = self.ranks.index(self.rank)
+            index += other
+        else:
+            return TypeError
