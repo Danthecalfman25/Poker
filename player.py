@@ -52,8 +52,9 @@ class Player():
                         return self.total_hand[j].rank
         return False
     
-    def isStraight():
-        
+    def isStraight(self):
+        for card in self.total_hand:
+            if card + 1 in self.total_hand
         return
     
     def is

@@ -28,3 +28,18 @@ class Card():
     
     def __radd__(self, value):
         return self.__add__(value)
+    
+    def __lt__(self, other):
+        if (self.ranks.index(self.rank) < self.ranks.index(other.rank)):
+            return True
+        return False
+    
+    def __gt__(self, other):
+        if (self.ranks.index(self.rank) > self.ranks.index(other.rank)):
+            return True
+        return False
+    
+    def __eq__(self, other):
+        if (self.ranks.index(self.rank) == self.ranks.index(other.rank)):
+            return True
+        return False
