@@ -38,10 +38,26 @@ class Player():
             self.chips = chips
 
     def ispair(self):
+        high_pair = -1
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 if self.total_hand[i] == self.total_hand[j]:
-                    return self.total_hand[i].rank
+                    high_pair = max(Card.ranks.index(self.total_hand[i].rank), high_pair)
+        if high_pair != -1:
+            return Card.ranks[high_pair]
+        return False
+        
+    
+    def istwopair(self):
+        high_pair = None
+        pair_count = 0
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                if self.total_hand[i] == self.total_hand[j]:
+                    pair_count += 1
+                    high_pair = max(self.total.hand[i], high_pair)
+        if high_pair != None and pair_count <= 2:
+            return high_pair    
         return False
     
     def istrips(self):
