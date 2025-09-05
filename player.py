@@ -16,20 +16,23 @@ class Player():
             self.total_hand.append(card)
         for card in self.table.community:
             self.total_hand.append(card)
-        if isRoyal_Flush() == True:
-            return "Royal Flush"
-        if isStraight_Flush() != False:
-            return isStraight_Flush()
-        if isQuads() == True:
-            return "Straight_Flush"
-        if isFull_House() == True:
-            return "Full House"
-        if isFlush() == True:
-            return "Flush"
-        #find = isStraight()
-        #find = isTrips()
-        if isPair() == True:
-            return "Pair"
+        card = None
+        card = self.isRoyal_Flush()
+        if card != False:
+            return "Royal Flush", card
+        
+        card = None
+        card = self.isStraightFlush()
+        if card != False:
+            return "Straight Flush", card
+        card = None
+        card = self.isQuadsh()
+        if card != False:
+            return "Quads", card
+        card = None
+        card = self.isFlush()
+        if card != False:
+            return "Royal Flush", card
 
 
     def receive(self, cards, chips):
@@ -37,7 +40,7 @@ class Player():
             self.hand.append(card)
             self.chips = chips
 
-    def ispair(self):
+    def isPair(self):
         high_pair = -1
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
@@ -48,7 +51,7 @@ class Player():
         return False
         
     
-    def istwopair(self):
+    def isTwoPair(self):
         pairs = []
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
@@ -60,7 +63,7 @@ class Player():
             return Card.ranks[pairs[-1]], Card.ranks[pairs[-2]]   
         return False
     
-    def istrips(self):
+    def isTrips(self):
         high_card = -1
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
@@ -106,7 +109,26 @@ class Player():
             
         return False
     
+    def isFullhouse(self):
+        card_count = {}
+        for card in self.total_hand:
+            if card.rank in card_count:
+                card_count[card.rank] += 1
+            else: card_count[card.rank] = 1
+        trips = []
+        pair = []
+        for rank, count in card_count.items():
+            if count == 3:
+                trips.append(Card.ranks.index(rank))
+            if count == 2:
+                pair.append(rank)
+        
+        trips.sort()
+        if ((trips and pair) or (len(trips) == 2)):
+            return trips[-1]
+    
     def isQuads(self):
+        high_card = -1
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 for k in range(j+1, len(self.total_hand)):
