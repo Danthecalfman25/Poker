@@ -49,7 +49,6 @@ class Player():
         
     
     def istwopair(self):
-        high_pair = -1
         pairs = []
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
@@ -62,11 +61,14 @@ class Player():
         return False
     
     def istrips(self):
+        high_card = -1
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 for k in range(j+1, len(self.total_hand)):
                     if self.total_hand[i] == self.total_hand[j] == self.total_hand[k]:
-                        return self.total_hand[j].rank
+                        high_card = max(high_card, Card.ranks.index(self.total_hand[i]))
+        if high_card != -1:
+            return Card.ranks[high_card]
         return False
     
     def isStraight(self):
