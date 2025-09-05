@@ -101,7 +101,7 @@ class Player():
         
         for suit_cards in suits.values():
             if len(suit_cards) >= 5:
-                highest_index = max(Card.ranks.index() for c in suit_cards) 
+                highest_index = max(Card.ranks.index(c.rank) for c in suit_cards) 
                 return Card.ranks[highest_index]
             
         return False
