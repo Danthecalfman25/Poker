@@ -72,7 +72,7 @@ class Player():
 
         if best_high is not None:
             return Card.ranks[best_high]  
-        return None 
+        return False 
     
     def isFlush(self):
         suits = {"H":[], "D":[], "S":[], "C":[]}
@@ -85,7 +85,7 @@ class Player():
                 highest_index = max(Card.ranks.index() for c in suit_cards) 
                 return Card.ranks[highest_index]
             
-        return None
+        return False
     
     def isQuads(self):
         for i in range(len(self.total_hand)):
@@ -96,7 +96,35 @@ class Player():
                             return self.total_hand[j].rank
         return False
 
+    def isStraightFlush(self):
+        if (self.isStraight() != False and self.isFlush() != False):
+            suits = {"H":[], "D":[], "S":[], "C":[]}
 
+            for card in self.total_hand:
+                suits[card.suit].append(card)
+            
+            for suit_cards in suits.values():
+                if len(suit_cards) >= 5:
+                    suit_cards.sort()
+
+                    indices = sorted(set(Card.ranks.index(c.rank) for c in suit_cards))
+
+                    if Card.ranks.index("A") in indices:
+                        indices.insert(0, -1)
+
+                    count = 1
+                    best_high = None
+                    for i in range(1, len(indices)):
+                        if indices[i] == indices[i - 1] + 1:
+                            count += 1
+                            if count >= 5:
+                                best_high = indices[i]  
+                        else:
+                            count = 1
+
+                    if best_high is not None:
+                        return Card.ranks[best_high]  
+        return False
 
 
     
