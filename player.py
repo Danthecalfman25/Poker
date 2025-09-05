@@ -75,24 +75,26 @@ class Player():
         return None 
     
     def isFlush(self):
-        heart = 0
-        club = 0
-        spade = 0
-        diamond = 0
+        suits = {"H":[], "D":[], "S":[], "C":[]}
+
         for card in self.total_hand:
-            if card.suit == "H":
-                heart += 1
-            if card.suit == "D":
-                diamond += 1
-            if card.suit == "S":
-                spade += 1
-            if card.suit == "C":
-                club += 1
-        if heart >= 5:
-            index = 0
-            for card in self.total_hand:
-                if card.suit == "H":
-                    index = max(index, self.ranks.index(card.rank))
+            suits[card.suit].append(card)
+        
+        for suit_cards in suits.values():
+            if len(suit_cards) >= 5:
+                highest_index = max(Card.ranks.index() for c in suit_cards) 
+                return Card.ranks[highest_index]
+            
+        return None
+    
+    def isQuads(self):
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                for k in range(j+1, len(self.total_hand)):
+                    for l in range(k+1, len(self.total_hand)):
+                        if self.total_hand[i] == self.total_hand[j] == self.total_hand[k] == self.total_hand[l]:
+                            return self.total_hand[j].rank
+        return False
 
 
 
