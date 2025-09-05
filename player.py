@@ -125,6 +125,11 @@ class Player():
                     if best_high is not None:
                         return Card.ranks[best_high]  
         return False
+    
+    def isRoyalFlush(self):
+        if self.isStraightFlush() == "A":
+            return "A"
+        return False
 
 
     
