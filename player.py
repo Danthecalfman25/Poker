@@ -49,15 +49,16 @@ class Player():
         
     
     def istwopair(self):
-        high_pair = None
-        pair_count = 0
+        high_pair = -1
+        pairs = []
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 if self.total_hand[i] == self.total_hand[j]:
-                    pair_count += 1
-                    high_pair = max(self.total.hand[i], high_pair)
-        if high_pair != None and pair_count <= 2:
-            return high_pair    
+                    pairs.append(Card.ranks.index(self.total_hand[i].rank))
+        pairs = list(set(pairs))
+        pairs.sort()
+        if len(pairs) >= 2:
+            return Card.ranks[pairs[-1]], Card.ranks[pairs[-2]]   
         return False
     
     def istrips(self):
