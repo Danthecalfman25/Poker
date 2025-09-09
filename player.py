@@ -12,33 +12,37 @@ class Player():
         self.total_hand = []
 
     def find_hand(self):
-        for card in self.hand:
-            self.total_hand.append(card)
-        for card in self.table.community:
-            self.total_hand.append(card)
-        card = None
-        card = self.isRoyal_Flush()
-        if card != False:
-            return "Royal Flush", card
-        
-        card = None
-        card = self.isStraightFlush()
-        if card != False:
-            return "Straight Flush", card
-        card = None
-        card = self.isQuadsh()
-        if card != False:
-            return "Quads", card
-        card = None
-        card = self.isFlush()
-        if card != False:
-            return "Royal Flush", card
+        self.total_hand = self.hand[:] + self.table.community[:]
+        hand = self.isRoyalFlush()
+        if hand: return hand
+        hand = self.isStraightFlush()
+        if hand: return hand
+        hand = self.isQuads()
+        if hand: return hand
+        hand = self.isFullHouse()
+        if hand: return hand
+        hand = self.isFlush()
+        if hand: return hand
+        hand = self.isStraight()
+        if hand: return hand
+        hand = self.isTrips()
+        if hand: return hand
+        hand = self.isTwoPair()
+        if hand: return hand
+        hand = self.isPair()
+        if hand: return hand
+        hand = self.HighCard()
+        return hand
 
 
     def receive(self, cards, chips):
         for card in cards:
             self.hand.append(card)
             self.chips = chips
+
+    def HighCard(self):
+        self.total_hand.sort(reverse= True)
+        return "HighCard:", self.total_hand[1].rank
 
     def isPair(self):
         high_pair = -1
@@ -109,7 +113,7 @@ class Player():
             
         return False
     
-    def isFullhouse(self):
+    def isFullHouse(self):
         card_count = {}
         for card in self.total_hand:
             if card.rank in card_count:
