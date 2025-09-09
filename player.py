@@ -47,7 +47,7 @@ class Player():
                 if self.total_hand[i] == self.total_hand[j]:
                     high_pair = max(Card.ranks.index(self.total_hand[i].rank), high_pair)
         if high_pair != -1:
-            return Card.ranks[high_pair]
+            return "Pair:", Card.ranks[high_pair]
         return False
         
     
@@ -60,7 +60,7 @@ class Player():
         pairs = list(set(pairs))
         pairs.sort()
         if len(pairs) >= 2:
-            return Card.ranks[pairs[-1]], Card.ranks[pairs[-2]]   
+            return "Two Pair:", Card.ranks[pairs[-1]], Card.ranks[pairs[-2]]   
         return False
     
     def isTrips(self):
@@ -71,7 +71,7 @@ class Player():
                     if self.total_hand[i] == self.total_hand[j] == self.total_hand[k]:
                         high_card = max(high_card, Card.ranks.index(self.total_hand[i]))
         if high_card != -1:
-            return Card.ranks[high_card]
+            return "Trips:", Card.ranks[high_card]
         return False
     
     def isStraight(self):
@@ -93,7 +93,7 @@ class Player():
                 count = 1
 
         if best_high is not None:
-            return Card.ranks[best_high]  
+            return "Straight:", Card.ranks[best_high]  
         return False 
     
     def isFlush(self):
@@ -105,7 +105,7 @@ class Player():
         for suit_cards in suits.values():
             if len(suit_cards) >= 5:
                 highest_index = max(Card.ranks.index(c.rank) for c in suit_cards) 
-                return Card.ranks[highest_index]
+                return "Flush:", Card.ranks[highest_index]
             
         return False
     
@@ -125,7 +125,7 @@ class Player():
         
         trips.sort()
         if ((trips and pair) or (len(trips) == 2)):
-            return trips[-1]
+            return "Full House:", trips[-1]
     
     def isQuads(self):
         high_card = -1
@@ -134,7 +134,7 @@ class Player():
                 for k in range(j+1, len(self.total_hand)):
                     for l in range(k+1, len(self.total_hand)):
                         if self.total_hand[i] == self.total_hand[j] == self.total_hand[k] == self.total_hand[l]:
-                            return self.total_hand[j].rank
+                            return "Quads:", self.total_hand[j].rank
         return False
 
     def isStraightFlush(self):
@@ -164,12 +164,12 @@ class Player():
                             count = 1
 
                     if best_high is not None:
-                        return Card.ranks[best_high]  
+                        return "StraightFlush:", Card.ranks[best_high]  
         return False
     
     def isRoyalFlush(self):
         if self.isStraightFlush() == "A":
-            return "A"
+            return "RoyalFlush:A"
         return False
 
 
