@@ -42,7 +42,7 @@ class Player():
 
     def HighCard(self):
         self.total_hand.sort(reverse= True)
-        return ("HighCard:", self.total_hand[0].rank)
+        return ("HighCard", self.total_hand[0].rank)
 
     def isPair(self):
         high_pair = -1
@@ -128,10 +128,9 @@ class Player():
         
         trips.sort()
         if ((trips and pair) or (len(trips) == 2)):
-            return ("Full House", trips[-1])
+            return ("Full House", self.ranks[trips[-1]], pair[-1])
     
     def isQuads(self):
-        high_card = -1
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 for k in range(j+1, len(self.total_hand)):
@@ -196,13 +195,3 @@ class Player():
     def updateBet(self, bet):
         self.bet += bet
 
-
-player = Player("Daniel")
-
-player.hand = [
-    Card("A", "H"), Card("K", "H"), Card("Q", "H"),
-    Card("J", "H"), Card("10", "H"), Card("3", "S"), Card("2", "D")
-]
-
-hand = player.find_hand()
-print(hand)
