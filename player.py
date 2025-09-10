@@ -12,7 +12,7 @@ class Player():
         self.total_hand = []
 
     def find_hand(self):
-        self.total_hand = self.hand[:] + self.table.community[:]
+        self.total_hand = self.hand[:] + self.table.community[: ]
         hand = self.isRoyalFlush()
         if hand: return hand
         hand = self.isStraightFlush()
