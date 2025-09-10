@@ -43,3 +43,6 @@ class Card():
         if (self.ranks.index(self.rank) == self.ranks.index(other.rank)):
             return True
         return False
+    
+    def __hash__(self):
+        return hash(self.rank)

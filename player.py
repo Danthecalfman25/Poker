@@ -42,16 +42,25 @@ class Player():
 
     def HighCard(self):
         self.total_hand.sort(reverse= True)
-        return ("HighCard", self.total_hand[0].rank)
+        return ("HighCard",) + tuple(card.rank for card in self.total_hand)
 
     def isPair(self):
-        high_pair = -1
+        high_pair = None
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 if self.total_hand[i] == self.total_hand[j]:
-                    high_pair = max(self.ranks.index(self.total_hand[i].rank), high_pair)
-        if high_pair != -1:
-            return ("Pair", self.ranks[high_pair])
+                    if high_pair is None:
+                        high_pair = self.total_hand[i]
+                    else:
+                        high_pair = max(self.total_hand[i], high_pair)
+
+        if high_pair != None:
+            hand = []
+            for card in self.hand:
+                if card != high_pair:
+                    hand.append(card)
+            hand.sort(reverse=True)
+            return ("Pair", high_pair.rank) + tuple(card.rank for card in hand)
         return False
         
      
@@ -60,21 +69,30 @@ class Player():
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 if self.total_hand[i] == self.total_hand[j]:
-                    pairs.append(self.ranks.index(self.total_hand[i].rank))
+                    pairs.append(self.total_hand[i])
         pairs = sorted(set(pairs), reverse=True)
+        hand = []
+        for card in self.hand:
+            if card not in pairs:
+                hand.append(card)
         if len(pairs) >= 2:
-            return ("Two Pair", self.ranks[pairs[0]], self.ranks[pairs[1]])
+            return ("Two Pair", pairs[0].rank, pairs[1].rank) + tuple(card.rank for card in sorted(hand, reverse=True))
         return False
     
     def isTrips(self):
-        high_card = -1
+        high_card = None
         for i in range(len(self.total_hand)):
             for j in range(i+1,len(self.total_hand)):
                 for k in range(j+1, len(self.total_hand)):
                     if self.total_hand[i] == self.total_hand[j] == self.total_hand[k]:
-                        high_card = max(high_card, self.ranks.index(self.total_hand[i].rank))
-        if high_card != -1:
-            return ("Trips", self.ranks[high_card])
+                        if high_card == None: high_card = self.total_hand[i]
+                        high_card = max(high_card, self.total_hand[i])
+        if high_card != None:
+            hand = []
+            for card in self.hand:
+                if card != high_card:
+                    hand.append(card)
+            return ("Trips", high_card.rank) + tuple(card.rank for card in sorted(hand, reverse=True))
         return False
     
     def isStraight(self):
@@ -107,8 +125,8 @@ class Player():
         
         for suit_cards in suits.values():
             if len(suit_cards) >= 5:
-                highest_index = max(self.ranks.index(c.rank) for c in suit_cards) 
-                return ("Flush", self.ranks[highest_index])
+                suit_cards.sort(reverse=True)
+                return ("Flush",) + tuple(card.rank for card in suit_cards)
             
         return False
     
