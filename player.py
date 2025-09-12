@@ -151,6 +151,7 @@ class Player():
             return ("Full House", self.ranks[trips[0]], self.ranks[pair[0]])
         elif (len(trips) == 2):
             return ("Full House", self.ranks[trips[0]], self.ranks[trips[1]])
+        else: return False
 
     
     def isQuads(self):
@@ -159,7 +160,12 @@ class Player():
                 for k in range(j+1, len(self.total_hand)):
                     for l in range(k+1, len(self.total_hand)):
                         if self.total_hand[i] == self.total_hand[j] == self.total_hand[k] == self.total_hand[l]:
-                            return ("Quads", self.total_hand[j].rank)
+                            hand = []
+                            for card in self.total_hand:
+                                if card !=self.total_hand[i]:
+                                    hand.append(card)
+                                    hand.sort(reverse=True)
+                            return ("Quads", self.total_hand[j].rank) + (hand[0].rank,)
         return False
 
     def isStraightFlush(self):
