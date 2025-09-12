@@ -42,7 +42,7 @@ class Player():
 
     def HighCard(self):
         self.total_hand.sort(reverse= True)
-        return ("HighCard",) + tuple(card.rank for card in self.total_hand)
+        return ("HighCard",) + tuple(self.total_hand[i] for i in range(0,5))
 
     def isPair(self):
         high_pair = None
@@ -56,11 +56,11 @@ class Player():
 
         if high_pair != None:
             hand = []
-            for card in self.hand:
+            for card in self.total_hand:
                 if card != high_pair:
                     hand.append(card)
             hand.sort(reverse=True)
-            return ("Pair", high_pair.rank) + tuple(card.rank for card in hand)
+            return ("Pair", high_pair.rank) + tuple(hand[i] for i in range(0,3))
         return False
         
      
@@ -72,11 +72,12 @@ class Player():
                     pairs.append(self.total_hand[i])
         pairs = sorted(set(pairs), reverse=True)
         hand = []
-        for card in self.hand:
+        for card in self.total_hand:
             if card not in pairs:
                 hand.append(card)
+        hand.sort(reverse=True)
         if len(pairs) >= 2:
-            return ("Two Pair", pairs[0].rank, pairs[1].rank) + tuple(card.rank for card in sorted(hand, reverse=True))
+            return ("Two Pair", pairs[0].rank, pairs[1].rank) + tuple(hand[0].rank,)
         return False
     
     def isTrips(self):
@@ -89,10 +90,11 @@ class Player():
                         high_card = max(high_card, self.total_hand[i])
         if high_card != None:
             hand = []
-            for card in self.hand:
+            for card in self.total_hand:
                 if card != high_card:
                     hand.append(card)
-            return ("Trips", high_card.rank) + tuple(card.rank for card in sorted(hand, reverse=True))
+            hand.sort(reverse=True)
+            return ("Trips", high_card.rank) + tuple(hand[i].rank for i in range (0,2))
         return False
     
     def isStraight(self):
@@ -126,7 +128,7 @@ class Player():
         for suit_cards in suits.values():
             if len(suit_cards) >= 5:
                 suit_cards.sort(reverse=True)
-                return ("Flush",) + tuple(card.rank for card in suit_cards)
+                return ("Flush",) + tuple(suit_cards[i].rank for i in range(0, 5))
             
         return False
     
@@ -142,11 +144,14 @@ class Player():
             if count == 3:
                 trips.append(self.ranks.index(rank))
             if count == 2:
-                pair.append(rank)
-        
-        trips.sort()
-        if ((trips and pair) or (len(trips) == 2)):
-            return ("Full House", self.ranks[trips[-1]], pair[-1])
+                pair.append(self.ranks.index(rank))
+        trips.sort(reverse=True)
+        pair.sort(reverse=True)
+        if (len(trips) == 1) and (len(pair)>= 1):
+            return ("Full House", self.ranks[trips[0]], self.ranks[pair[0]])
+        elif (len(trips) == 2):
+            return ("Full House", self.ranks[trips[0]], self.ranks[trips[1]])
+
     
     def isQuads(self):
         for i in range(len(self.total_hand)):
