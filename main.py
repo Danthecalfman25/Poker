@@ -1,6 +1,7 @@
 from deck import *
 from card import *
 from player import *
+from game import *
 
 def preflop(player1, player2, deck, table):
     #deal 2 card to each player
