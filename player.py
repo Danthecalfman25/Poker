@@ -9,6 +9,7 @@ class Player():
         self.hand = [] 
         self.table = Table()
         self.name = name
+        self.chips = 0
         self.bet = 0
         self.total_hand = []
 
