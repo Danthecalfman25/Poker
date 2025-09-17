@@ -36,11 +36,6 @@ class Player():
         return self.HighCard()
 
 
-    def receive(self, cards, chips):
-        for card in cards:
-            self.hand.append(card)
-            self.chips = chips
-
     def HighCard(self):
         self.total_hand.sort(reverse= True)
         return ("HighCard",) + tuple(self.total_hand[i] for i in range(0,5))
@@ -206,8 +201,10 @@ class Player():
 
         return False
 
-
-    
+    def receiveCard(self, cards):
+        for card in cards:
+            self.hand.append(card)
+            
     def display(self):
         print(f"{self.name}'s cards:")
         for card in self.hand:

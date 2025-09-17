@@ -2,6 +2,7 @@ from deck import *
 from card import *
 from player import *
 from game import *
+from table import *
 
 def preflop(game, deck, table):
     #deal 2 card to each player
@@ -11,18 +12,22 @@ def preflop(game, deck, table):
         player.receive(deck.deal(2))
         player.display()
         print("\n")
-    game.player[game.button + 1].updateBet(game.smallBlind)
-    game.player[game.button + 2].updateBet(game.bigBlind)
+    game.players[(game.button + 1) % len(game.players)].updateBet(game.smallBlind) 
+    game.players[(game.button + 2) % len(game.players)].updateBet(game.bigBlind) 
     bettingRoundPreFlop(game, table)
 
 def bettingRoundPreFlop(game, table):
-    game.current_player = game.players[game.button + 3] % len(game.players)
+    game.current_player_index = game.players[game.button + 3] % len(game.players)
+    game.current_player = game.players[game.current_player_index]
     table.current_bet = game.bigBlind
     game.last_raiser = game.players[(game.button + 2) % len(game.players)]
     while True:
-        if game.current_player == game.last_raiser:
+        if (game.current_player == game.last_raiser) and (game.blind_turn > 0):
             break
-        playerTurn(game.current_player, table)
+        if (game.current_player == game.players[game.button + 2]):
+            game.blind_turn += 1
+        playerTurn(game, game.current_player, table)
+        game.current_player = game.players[(game.current_player + 1) % len(game.players)]
 
 
 
@@ -30,7 +35,7 @@ def playerTurn(game, player, table):
     
     choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
     
-    if (choice == 1):
+    if (choice == "1"):
         player.displayChips()
         bet = input("Enter bet:")
         player.updateBet(bet)
@@ -38,14 +43,14 @@ def playerTurn(game, player, table):
         player.displayBet()
         player.displayChips()
         table.updateCurrent_bet()
-    if (choice == 2):
+    if (choice == "2"):
         player.displayChips()
-        bet = table.current_bet() - player.bet
+        bet = table.current_bet - player.bet
         player.updateBet(bet)
         player.updateChips(-bet)
         player.displayBet()
         player.displayChips()
-    if (choice == 3):
+    if (choice == "3"):
         game.active.remove(player)
     
 
@@ -65,6 +70,8 @@ def main():
     game.active = game.players[:]
     deck = Deck()
     table = Table()
+    game.smallBlind = 10
+    game.bigBlind = 20
     preflop(game, deck, table)
 
 
