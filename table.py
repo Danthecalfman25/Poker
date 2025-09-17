@@ -19,6 +19,9 @@ class Table():
 
     def updatePot(self, bet):
         self.pot += bet
+    
+    def displayPot(self):
+        print("Pot: ", self.pot)
 
     def updateCurrent_bet(self, bet):
         self.current_bet += bet
