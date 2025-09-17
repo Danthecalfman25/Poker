@@ -22,13 +22,13 @@ def bettingRoundPreFlop(game, table):
     table.current_bet = game.bigBlind
     game.last_raiser = game.players[(game.button + 2) % len(game.players)]
     while True:
+        game.current_player = game.players[game.current_player_index]
         if (game.current_player == game.last_raiser) and (game.blind_turn > 0):
             break
         if (game.current_player == game.players[game.button + 2]):
             game.blind_turn += 1
         playerTurn(game, game.current_player, table)
-        game.current_player = game.players[(game.current_player + 1) % len(game.players)]
-
+        game.current_player_index = (game.current_player_index + 1) % len(game.players) 
 
 
 def playerTurn(game, player, table):
@@ -37,12 +37,13 @@ def playerTurn(game, player, table):
     
     if (choice == "1"):
         player.displayChips()
-        bet = input("Enter bet:")
+        bet = int(input("Enter bet:"))
         player.updateBet(bet)
         player.updateChips(-bet)
         player.displayBet()
         player.displayChips()
-        table.updateCurrent_bet()
+        table.current_bet = player.bet
+        game.last_raiser = player
     if (choice == "2"):
         player.displayChips()
         bet = table.current_bet - player.bet
