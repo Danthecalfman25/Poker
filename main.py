@@ -6,6 +6,7 @@ from table import *
 
 def preflop(game, deck, table):
     #deal 2 card to each player
+    game.resetPlayers()
     deck.shuffle()
     print("Dealing:\n")
     for player in game.active:
@@ -20,27 +21,23 @@ def preflop(game, deck, table):
 def bettingRoundPreFlop(game, table):
     game.current_player_index = game.players[game.button + 3] % len(game.players)
     game.current_player = game.players[game.current_player_index]
-    table.current_bet = game.bigBlind()
-    game.last_raiser = game.bigBlind()
+    table.current_bet = game.bigBlind
+    game.last_raiser = game.bigBlind
     while True:
-        game.current_player = game.active[game.current_player_index % len(game.active)]
-        if (game.current_player == game.last_raiser) and (game.blind_turn > 0):
-            break
-        if (game.current_player == game.bigBlind()):
-            game.blind_turn += 1
         playerTurn(game, game.current_player, table)
-        game.current_player_index = (game.current_player_index + 1) % len(game.active) 
+        game.current_player_index = (game.current_player_index + 1) % len(game.active)
+        game.check_endRound() 
 
 
 def playerTurn(game, player, table):
-    
+    game.turns_taken += 1
     choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
     
     if (choice == "1"):
         player.displayChips()
         bet = int(input("Enter bet:"))
         player.updateBet(bet)
-        player.update_currentBet(bet)
+        table.update_currentBet(bet)
         player.displayBet()
         player.displayChips()
         table.displayPot()
@@ -63,9 +60,9 @@ def playerTurn(game, player, table):
 
         
 def main():
-    game = Game()
-    name = input("Enter name:")
     table = Table()
+    game = Game(table)
+    name = input("Enter name:")
     player = Player(name, table)
     deck = Deck()
     game.players.append(player)
