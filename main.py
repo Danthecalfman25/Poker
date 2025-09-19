@@ -14,10 +14,11 @@ def preflop(game, deck, table):
         print("\n")
     game.smallBlind().updateBet(game.smallBlind)
     game.bigBlind().updateBet(game.bigBlind)
+    table.update_currentBet(game.bigBlind)
     bettingRoundPreFlop(game, table)
 
 def bettingRoundPreFlop(game, table):
-    game.current_player_index = game.player[game.button + 3] % len(game.players)
+    game.current_player_index = game.players[game.button + 3] % len(game.players)
     game.current_player = game.players[game.current_player_index]
     table.current_bet = game.bigBlind()
     game.last_raiser = game.bigBlind()
@@ -39,6 +40,7 @@ def playerTurn(game, player, table):
         player.displayChips()
         bet = int(input("Enter bet:"))
         player.updateBet(bet)
+        player.update_currentBet(bet)
         player.displayBet()
         player.displayChips()
         table.displayPot()
