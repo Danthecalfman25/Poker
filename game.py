@@ -34,6 +34,7 @@ class Game():
         for player in self.active:
             if player.chips > 0:
                 target_bet = player.bet
+                break
         
         for player in self.active:
             if player.chips == 0: continue

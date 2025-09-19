@@ -26,7 +26,9 @@ def bettingRoundPreFlop(game, table):
     while True:
         playerTurn(game, game.current_player, table)
         game.current_player_index = (game.current_player_index + 1) % len(game.active)
-        game.check_endRound() 
+        if game.check_endRound():
+            break
+
 
 
 def playerTurn(game, player, table):
