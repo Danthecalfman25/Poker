@@ -19,3 +19,9 @@ class Game():
     
     def resetPlayers(self):
         self.active = self.players[:]
+    
+    def bigBlind(self):
+        return self.players[(self.button + 2) % len(self.players)]
+
+    def smallBlind(self):
+        return self.players[(self.button + 1) % len(self.players)]

@@ -12,23 +12,23 @@ def preflop(game, deck, table):
         player.receive(deck.deal(2))
         player.display()
         print("\n")
-    game.players[(game.button + 1) % len(game.players)].updateBet(game.smallBlind)
-    game.players[(game.button + 2) % len(game.players)].updateBet(game.bigBlind)
+    game.smallBlind().updateBet(game.smallBlind)
+    game.bigBlind().updateBet(game.bigBlind)
     bettingRoundPreFlop(game, table)
 
 def bettingRoundPreFlop(game, table):
     game.current_player_index = game.player[game.button + 3] % len(game.players)
     game.current_player = game.players[game.current_player_index]
-    table.current_bet = game.bigBlind
-    game.last_raiser = game.players[(game.button + 2) % len(game.players)]
+    table.current_bet = game.bigBlind()
+    game.last_raiser = game.bigBlind()
     while True:
         game.current_player = game.active[game.current_player_index % len(game.active)]
         if (game.current_player == game.last_raiser) and (game.blind_turn > 0):
             break
-        if (game.current_player == game.players[game.button + 2]):
+        if (game.current_player == game.bigBlind()):
             game.blind_turn += 1
         playerTurn(game, game.current_player, table)
-        game.current_player_index = (game.current_player_index + 1) % len(game.players) 
+        game.current_player_index = (game.current_player_index + 1) % len(game.active) 
 
 
 def playerTurn(game, player, table):
