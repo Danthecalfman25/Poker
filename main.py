@@ -18,12 +18,12 @@ def preflop(game, deck, table):
     bettingRoundPreFlop(game, table)
 
 def bettingRoundPreFlop(game, table):
-    game.current_player_index = game.players[game.button + 3] % len(game.players)
+    game.current_player_index = game.player[game.button + 3] % len(game.players)
     game.current_player = game.players[game.current_player_index]
     table.current_bet = game.bigBlind
     game.last_raiser = game.players[(game.button + 2) % len(game.players)]
     while True:
-        game.current_player = game.players[game.current_player_index]
+        game.current_player = game.active[game.current_player_index % len(game.active)]
         if (game.current_player == game.last_raiser) and (game.blind_turn > 0):
             break
         if (game.current_player == game.players[game.button + 2]):
@@ -57,7 +57,7 @@ def playerTurn(game, player, table):
         table.updatePot(bet)
         table.displayPot()
     if (choice == "3"):
-        game.active.remove(player)
+        game.folded(player)
     
 
         
@@ -73,7 +73,7 @@ def main():
     game.players.append(player)
     computer = Player("computer")
     game.players.append(computer)
-    game.active = game.players[:]
+    game.resetPlayers()
     deck = Deck()
     table = Table()
     game.smallBlind = 10

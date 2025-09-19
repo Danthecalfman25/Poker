@@ -12,3 +12,10 @@ class Game():
 
     def incrementButton(self):
         self.button = ((self.button + 1 ) % len(self.players))
+    
+    def folded(self, other):
+        self.active.remove(other)
+        self.current_player_index += -1
+    
+    def resetPlayers(self):
+        self.active = self.players[:]
