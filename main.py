@@ -19,11 +19,11 @@ def preflop(game, deck, table):
     bettingRoundPreFlop(game, table)
 
 def bettingRoundPreFlop(game, table):
-    game.current_player_index = game.players[game.button + 3] % len(game.players)
-    game.current_player = game.players[game.current_player_index]
+    game.current_player_index = game.button + 3 % len(game.players)
     table.current_bet = game.bigBlind
     game.last_raiser = game.bigBlind
     while True:
+        game.current_player = game.players[game.current_player_index]
         playerTurn(game, game.current_player, table)
         game.current_player_index = (game.current_player_index + 1) % len(game.active)
         if game.check_endRound():
