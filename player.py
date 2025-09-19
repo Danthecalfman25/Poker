@@ -221,4 +221,7 @@ class Player():
 
     def updateBet(self, bet):
         self.bet += bet
+        self.updateChips(-bet)
+        self.table.updatePot(bet)
+        self.table.updateCurrent_bet(bet)
 
