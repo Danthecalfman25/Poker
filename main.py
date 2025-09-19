@@ -63,13 +63,13 @@ def playerTurn(game, player, table):
 def main():
     game = Game()
     name = input("Enter name:")
-    player = Player(name)
+    table = Table()
+    player = Player(name, table)
+    deck = Deck()
     game.players.append(player)
-    computer = Player("computer")
+    computer = Player("computer", table)
     game.players.append(computer)
     game.resetPlayers()
-    deck = Deck()
-    table = Table()
     game.smallBlind = 10
     game.bigBlind = 20
     for player in game.players:
