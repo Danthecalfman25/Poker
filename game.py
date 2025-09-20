@@ -41,3 +41,9 @@ class Game():
             if player.bet != target_bet:
                 return False
         return True
+
+    def endRound(self):
+        self.last_raiser = None
+        self.turns_taken = 0
+        self.table.current_bet = 0
+        
