@@ -29,6 +29,11 @@ def bettingRoundPreFlop(game, table):
         if game.check_endRound():
             break
 
+def flop(game, deck, table):
+    table.recieve(deck.deal(3))
+    table.display()
+    table.displayPot()
+    
 
 
 def playerTurn(game, player, table):
@@ -76,6 +81,7 @@ def main():
     for player in game.players:
         player.chips = 1000
     preflop(game, deck, table)
+    flop(game, deck, table)
 
 
 
