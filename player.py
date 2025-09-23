@@ -12,6 +12,7 @@ class Player():
         self.chips = 0
         self.bet = 0
         self.total_hand = []
+        self.final_hand = None
 
     def find_hand(self):
         self.total_hand = self.hand[:] + self.table.community[:]

@@ -10,6 +10,18 @@ class Game():
         self.last_raiser = None
         self.turns_taken = 0
         self.table = table
+        self.hand_rankings = [
+    "High Card",
+    "One Pair",
+    "Two Pair",
+    "Three of a Kind",
+    "Straight",
+    "Flush",
+    "Full House",
+    "Four of a Kind",
+    "Straight Flush",
+    "Royal Flush"
+]
 
     def incrementButton(self):
         self.button = ((self.button + 1 ) % len(self.players))
@@ -29,7 +41,7 @@ class Game():
     
     def check_endRound(self):
         target_bet = None
-        if self.turns_taken != len(self.active):
+        if self.turns_taken < len(self.active):
                 return False
         for player in self.active:
             if player.chips > 0:
@@ -47,3 +59,15 @@ class Game():
         self.turns_taken = 0
         self.table.current_bet = 0
         
+    def endGame(self):
+        pass
+
+    def compareHands(self):
+        highest_hand = -1
+        winner = None
+        for player in self.active:
+            player.final_hand = player.findHand()
+            if (self.hand_rankings.index(player.final_hand[0]) > highest_hand):
+                highest_hand = self.hand_rankings.index(player.final_hand[0])
+                winner = player
+        return winner

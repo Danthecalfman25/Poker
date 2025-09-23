@@ -30,22 +30,61 @@ def bettingRoundPreFlop(game, table):
             break
 
 def flop(game, deck, table):
+    if (len(game.active) == 1):
+        game.endGame()
     game.endRound()
-    table.recieve(deck.deal(3))
+    table.receive(deck.deal(3))
     table.display()
     table.displayPot()
     bettingRoundFlop(game, table)
 
 def bettingRoundFlop(game, table):
-    if (len(game.active) == 1):
-        break
     game.current_player_index = game.button + 1 % len(game.players)
     while True:
-        game.current_player = game.players[game.current_player_index]
+        game.current_player = game.active[game.current_player_index]
         playerTurn(game, game.current_player, table)
         game.current_player_index = (game.current_player_index + 1) % len(game.active)
         if game.check_endRound():
             break
+
+def turn(game, deck, table):
+    if (len(game.active) == 1):
+        game.endGame()
+    game.endRound()
+    table.receive(deck.deal(1))
+    table.display()
+    table.displayPot()
+    bettingRoundFlop(game, table)
+
+def bettingRoundTurn(game, table):
+    game.current_player_index = game.button + 1 % len(game.players)
+    while True:
+        game.current_player = game.active[game.current_player_index]
+        playerTurn(game, game.current_player, table)
+        game.current_player_index = (game.current_player_index + 1) % len(game.active)
+        if game.check_endRound():
+            break
+
+def river(game, deck, table):
+    if (len(game.active) == 1):
+        game.endGame()
+    game.endRound()
+    table.receive(deck.deal(1))
+    table.display()
+    table.displayPot()
+    bettingRoundFlop(game, table)
+
+def bettingRoundRiver(game, table):
+    game.current_player_index = game.button + 1 % len(game.players)
+    while True:
+        game.current_player = game.active[game.current_player_index]
+        playerTurn(game, game.current_player, table)
+        game.current_player_index = (game.current_player_index + 1) % len(game.active)
+        if game.check_endRound():
+            break
+
+def showdown(game, table):
+    
     
 
 
@@ -95,6 +134,9 @@ def main():
         player.chips = 1000
     preflop(game, deck, table)
     flop(game, deck, table)
+    turn(game, deck, table)
+    river(game, deck, table)
+
 
 
 
