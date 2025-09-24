@@ -67,10 +67,14 @@ class Game():
         highest_hand = (-1,)
         winner = None
         for player in self.active:
-            player.final_hand = player.findHand()
-            player.final_hand[0] = self.hand_rankings.index(player.final_hand[0])
-            for i in range(1, len(player.final_hand)):
-                player.final_hand[i] = self.ranks.index(player.final_hand[i])
+            hand = player.findHand()
+            player.final_hand = []
+            player.final_hand.append(self.hand_rankings.index(hand[0]))
+            for i in range(1, len(hand)):
+                player.final_hand.append(self.ranks.index(hand[i]))
+            player.final_hand = tuple(player.final_hand)
+            
+            
             
         for player in self.active:
             if player.final_hand > highest_hand:
