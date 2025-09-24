@@ -19,7 +19,7 @@ def preflop(game, deck, table):
     bettingRoundPreFlop(game, table)
 
 def bettingRoundPreFlop(game, table):
-    game.current_player_index = game.button + 3 % len(game.players)
+    game.current_player_index = (game.button + 3) % len(game.players)
     table.current_bet = game.bigBlind
     game.last_raiser = game.bigBlind
     while True:
@@ -39,7 +39,7 @@ def flop(game, deck, table):
     bettingRoundFlop(game, table)
 
 def bettingRoundFlop(game, table):
-    game.current_player_index = game.button + 1 % len(game.players)
+    game.current_player_index = (game.button + 1) % len(game.players)
     while True:
         game.current_player = game.active[game.current_player_index]
         playerTurn(game, game.current_player, table)
@@ -57,7 +57,7 @@ def turn(game, deck, table):
     bettingRoundFlop(game, table)
 
 def bettingRoundTurn(game, table):
-    game.current_player_index = game.button + 1 % len(game.players)
+    game.current_player_index = (game.button + 1) % len(game.players)
     while True:
         game.current_player = game.active[game.current_player_index]
         playerTurn(game, game.current_player, table)
@@ -75,7 +75,7 @@ def river(game, deck, table):
     bettingRoundFlop(game, table)
 
 def bettingRoundRiver(game, table):
-    game.current_player_index = game.button + 1 % len(game.players)
+    game.current_player_index = (game.button + 1) % len(game.players)
     while True:
         game.current_player = game.active[game.current_player_index]
         playerTurn(game, game.current_player, table)
@@ -84,7 +84,7 @@ def bettingRoundRiver(game, table):
             break
 
 def showdown(game, table):
-    
+    pass
     
 
 

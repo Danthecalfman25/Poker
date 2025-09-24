@@ -10,6 +10,7 @@ class Game():
         self.last_raiser = None
         self.turns_taken = 0
         self.table = table
+        self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         self.hand_rankings = [
     "High Card",
     "One Pair",
@@ -63,11 +64,17 @@ class Game():
         pass
 
     def compareHands(self):
-        highest_hand = -1
+        highest_hand = (-1,)
         winner = None
         for player in self.active:
             player.final_hand = player.findHand()
-            if (self.hand_rankings.index(player.final_hand[0]) > highest_hand):
-                highest_hand = self.hand_rankings.index(player.final_hand[0])
+            player.final_hand[0] = self.hand_rankings.index(player.final_hand[0])
+            for i in range(1, len(player.final_hand)):
+                player.final_hand[i] = self.ranks.index(player.final_hand[i])
+            
+        for player in self.active:
+            if player.final_hand > highest_hand:
+                highest_hand = player.final_hand
                 winner = player
+
         return winner
