@@ -18,6 +18,7 @@ class Card():
         return False
     
     
+    
     def __add__(self, other):
         if isinstance(other, int):
             index = self.ranks.index(self.rank)
