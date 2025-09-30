@@ -1,9 +1,10 @@
 class Hand_Detection():
-    def __init__(self, player):
-        self.player = player
-        
-    def find_hand(self):
-        self.player.total_hand = self.player.hand[:] + self.player.table.community[:]
+    def __init__(self):
+        self.total_hand = None
+        self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+
+    def find_hand(self, player_hand, community):
+        self.total_hand = player_hand[:] + community[:]
         hand = self.isRoyalFlush()
         if hand: return hand
         hand = self.isStraightFlush()
@@ -26,22 +27,22 @@ class Hand_Detection():
 
 
     def HighCard(self):
-        self.player.total_hand.sort(reverse= True)
-        return ("HighCard",) + tuple(self.player.total_hand[i] for i in range(0,5))
+        self.total_hand.sort(reverse= True)
+        return ("HighCard",) + tuple(self.total_hand[i] for i in range(0,5))
 
     def isPair(self):
         high_pair = None
-        for i in range(len(self.player.total_hand)):
-            for j in range(i+1,len(self.player.total_hand)):
-                if self.player.total_hand[i] == self.player.total_hand[j]:
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                if self.total_hand[i] == self.total_hand[j]:
                     if high_pair is None:
-                        high_pair = self.player.total_hand[i]
+                        high_pair = self.total_hand[i]
                     else:
-                        high_pair = max(self.player.total_hand[i], high_pair)
+                        high_pair = max(self.total_hand[i], high_pair)
 
         if high_pair != None:
             hand = []
-            for card in self.player.total_hand:
+            for card in self.total_hand:
                 if card != high_pair:
                     hand.append(card)
             hand.sort(reverse=True)
@@ -51,13 +52,13 @@ class Hand_Detection():
      
     def isTwoPair(self):
         pairs = []
-        for i in range(len(self.player.total_hand)):
-            for j in range(i+1,len(self.player.total_hand)):
-                if self.player.total_hand[i] == self.player.total_hand[j]:
-                    pairs.append(self.player.total_hand[i])
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                if self.total_hand[i] == self.total_hand[j]:
+                    pairs.append(self.total_hand[i])
         pairs = sorted(set(pairs), reverse=True)
         hand = []
-        for card in self.player.total_hand:
+        for card in self.total_hand:
             if card not in pairs:
                 hand.append(card)
         hand.sort(reverse=True)
@@ -67,15 +68,15 @@ class Hand_Detection():
     
     def isTrips(self):
         high_card = None
-        for i in range(len(self.player.total_hand)):
-            for j in range(i+1,len(self.player.total_hand)):
-                for k in range(j+1, len(self.player.total_hand)):
-                    if self.player.total_hand[i] == self.player.total_hand[j] == self.player.total_hand[k]:
-                        if high_card == None: high_card = self.player.total_hand[i]
-                        high_card = max(high_card, self.player.total_hand[i])
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                for k in range(j+1, len(self.total_hand)):
+                    if self.total_hand[i] == self.total_hand[j] == self.total_hand[k]:
+                        if high_card == None: high_card = self.total_hand[i]
+                        high_card = max(high_card, self.total_hand[i])
         if high_card != None:
             hand = []
-            for card in self.player.total_hand:
+            for card in self.total_hand:
                 if card != high_card:
                     hand.append(card)
             hand.sort(reverse=True)
@@ -83,11 +84,11 @@ class Hand_Detection():
         return False
     
     def isStraight(self):
-        self.player.total_hand.sort()
+        self.total_hand.sort()
 
-        indices = sorted(set(self.player.ranks.index(c.rank) for c in self.player.total_hand))
+        indices = sorted(set(self.ranks.index(c.rank) for c in self.total_hand))
 
-        if self.player.ranks.index("A") in indices:
+        if self.ranks.index("A") in indices:
             indices.insert(0, -1)
 
         count = 1
@@ -101,13 +102,13 @@ class Hand_Detection():
                 count = 1
 
         if best_high is not None:
-            return ("Straight", self.player.ranks[best_high])  
+            return ("Straight", self.ranks[best_high])  
         return False 
     
     def isFlush(self):
         suits = {"H":[], "D":[], "S":[], "C":[]}
 
-        for card in self.player.total_hand:
+        for card in self.total_hand:
             suits[card.suit].append(card)
         
         for suit_cards in suits.values():
@@ -117,9 +118,9 @@ class Hand_Detection():
             
         return False
     
-    def isFullHouse(self.player):
+    def isFullHouse(self):
         card_count = {}
-        for card in self.player.total_hand:
+        for card in self.total_hand:
             if card.rank in card_count:
                 card_count[card.rank] += 1
             else: card_count[card.rank] = 1
@@ -127,46 +128,46 @@ class Hand_Detection():
         pair = []
         for rank, count in card_count.items():
             if count == 3:
-                trips.append(self.player.ranks.index(rank))
+                trips.append(self.ranks.index(rank))
             if count == 2:
-                pair.append(self.player.ranks.index(rank))
+                pair.append(self.ranks.index(rank))
         trips.sort(reverse=True)
         pair.sort(reverse=True)
         if (len(trips) == 1) and (len(pair)>= 1):
-            return ("Full House", self.player.ranks[trips[0]], self.player.ranks[pair[0]])
+            return ("Full House", self.ranks[trips[0]], self.ranks[pair[0]])
         elif (len(trips) == 2):
-            return ("Full House", self.player.ranks[trips[0]], self.player.ranks[trips[1]])
+            return ("Full House", self.ranks[trips[0]], self.ranks[trips[1]])
         else: return False
 
     
     def isQuads(self):
-        for i in range(len(self.player.total_hand)):
-            for j in range(i+1,len(self.player.total_hand)):
-                for k in range(j+1, len(self.player.total_hand)):
-                    for l in range(k+1, len(self.player.total_hand)):
-                        if self.player.total_hand[i] == self.player.total_hand[j] == self.player.total_hand[k] == self.player.total_hand[l]:
+        for i in range(len(self.total_hand)):
+            for j in range(i+1,len(self.total_hand)):
+                for k in range(j+1, len(self.total_hand)):
+                    for l in range(k+1, len(self.total_hand)):
+                        if self.total_hand[i] == self.total_hand[j] == self.total_hand[k] == self.total_hand[l]:
                             hand = []
-                            for card in self.player.total_hand:
-                                if card !=self.player.total_hand[i]:
+                            for card in self.total_hand:
+                                if card !=self.total_hand[i]:
                                     hand.append(card)
                                     hand.sort(reverse=True)
-                            return ("Quads", self.player.total_hand[j].rank) + (hand[0].rank,)
+                            return ("Quads", self.total_hand[j].rank) + (hand[0].rank,)
         return False
 
     def isStraightFlush(self):
         if (self.isStraight() != False and self.isFlush() != False):
             suits = {"H":[], "D":[], "S":[], "C":[]}
 
-            for card in self.player.total_hand:
+            for card in self.total_hand:
                 suits[card.suit].append(card)
             
             for suit_cards in suits.values():
                 if len(suit_cards) >= 5:
                     suit_cards.sort()
 
-                    indices = sorted(set(self.player.ranks.index(c.rank) for c in suit_cards))
+                    indices = sorted(set(self.ranks.index(c.rank) for c in suit_cards))
 
-                    if self.player.ranks.index("A") in indices:
+                    if self.ranks.index("A") in indices:
                         indices.insert(0, -1)
 
                     count = 1
@@ -180,7 +181,7 @@ class Hand_Detection():
                             count = 1
 
                     if best_high is not None:
-                        return ("StraightFlush", self.player.ranks[best_high])  
+                        return ("StraightFlush", self.ranks[best_high])  
         return False
     
     def isRoyalFlush(self):
