@@ -2,6 +2,7 @@
 from card import *
 from deck import *
 from table import *
+from hand_detection import *
 
 class Player():
     def __init__(self, name, table):
@@ -13,6 +14,7 @@ class Player():
         self.bet = 0
         self.total_hand = []
         self.final_hand = None
+        self.hand_detection = Hand_Detection(self)
 
 
     def receiveCard(self, cards):
@@ -37,6 +39,9 @@ class Player():
         self.bet += bet
         self.updateChips(-bet)
         self.table.updatePot(bet)
+
+    def find_hand(self):
+        self.hand_detection.find_hand()
 
 
 class humanPlayer(Player):
