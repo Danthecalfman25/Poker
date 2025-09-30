@@ -1,4 +1,6 @@
 class Hand_Detection():
+    def __init__(self, cards):
+        self.cards = cards
     def find_hand(self):
         self.total_hand = self.hand[:] + self.table.community[:]
         hand = self.isRoyalFlush()
