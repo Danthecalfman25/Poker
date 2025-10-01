@@ -1,10 +1,17 @@
+from self.deck import *
+from card import *
+from player import *
+from table import *
+
+
 class Game():
     def __init__(self, table):
+        self.deck = Deck()
         self.players = []
         self.active = []
         self.button = 0
-        self.smallBlind = 0
-        self.bigBlind = 0
+        self.smallBlind_Bet = 0
+        self.bigBlind_Bet = 0
         self.current_player_index = 0
         self.current_player = None
         self.last_raiser = None
@@ -23,6 +30,109 @@ class Game():
     "Straight Flush",
     "Royal Flush"
 ]
+    
+    def play(self, player1, player2):
+        pass
+
+    def preflop(self):
+        #deal 2 card to each player
+        self.resetPlayers()
+        self.deck.shuffle()
+        print("Dealing:\n")
+        for player in self.active:
+            player.receive(self.deck.deal(2))
+            player.display()
+            print("\n")
+        self.smallBlind().updateBet(self.smallBlind)
+        self.bigBlind().updateBet(self.bigBlind)
+        self.table.update_currentBet(self.bigBlind)
+        bettingRoundPreFlop(self)
+
+def bettingRoundPreFlop(self):
+    self.current_player_index = self.UTG()
+    self.table.current_bet = self.bigBlind_Bet
+    self.last_raiser = self.bigBlind()
+    while True:
+        self.current_player = self.players[self.current_player_index]
+        playerTurn(self, self.current_player)
+        self.incrementTurn()
+        if self.check_endRound():
+            break
+
+def flop(self):
+    if (len(self.active) == 1):
+        self.endself()
+    self.endRound()
+    self.table.receive(self.deck.deal(3))
+    self.table.display()
+    self.table.displayPot()
+    bettingRoundFlop(self)
+
+def bettingRoundFlop(self):
+    self.current_player_index = self.smallBlind()
+    while True:
+        self.current_player = self.active[self.current_player_index]
+        playerTurn(self, self.current_player)
+        self.incrementTurn()
+        if self.check_endRound():
+            break
+
+def turn(self):
+    if (len(self.active) == 1):
+        self.endself()
+    self.endRound()
+    self.table.receive(self.deck.deal(1))
+    self.table.display()
+    self.table.displayPot()
+    bettingRoundFlop(self)
+
+def bettingRoundTurn(self):
+    self.current_player_index = self.smallBlind()
+    while True:
+        self.current_player = self.active[self.current_player_index]
+        playerTurn(self)
+        self.incrementTurn()
+        if self.check_endRound():
+            break
+
+def river(self):
+    if (len(self.active) == 1):
+        self.endself()
+    self.endRound()
+    self.table.receive(self.deck.deal(1))
+    self.table.display()
+    self.table.displayPot()
+    bettingRoundFlop(self)
+
+def bettingRoundRiver(self):
+    self.current_player_index = self.smallBlind()
+    while True:
+        self.current_player = self.active[self.current_player_index]
+        playerTurn(self)
+        self.incrementTurn()
+        if self.check_endRound():
+            break
+
+def showdown(self):
+    pass
+    
+
+
+def playerTurn(self, player):
+    self.turns_taken += 1
+    player.turn()
+    choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
+    
+    if (choice == "1"):
+        bet = int(input("Enter bet:"))
+        self.table.update_currentBet(bet)
+        self.table.displayPot()
+        self.last_raiser = player
+    if (choice == "2"):
+        self.table.updatepot()
+        self.table.displayPot()
+    if (choice == "3"):
+        self.folded(player)
 
     def incrementButton(self):
         self.button = ((self.button + 1 ) % len(self.players))
@@ -33,6 +143,9 @@ class Game():
     
     def resetPlayers(self):
         self.active = self.players[:]
+    
+    def UTG(self):
+        return self.players[(self.button + 3) % len(self.players)]
     
     def bigBlind(self):
         return self.players[(self.button + 2) % len(self.players)]
@@ -60,7 +173,7 @@ class Game():
         self.turns_taken = 0
         self.table.current_bet = 0
         
-    def endGame(self):
+    def endself(self):
         pass
 
     def compareHands(self):
@@ -82,3 +195,6 @@ class Game():
                 winner = player
 
         return winner
+    
+    def incrementTurn(self):
+        self.current_player_index = (self.current_player_index + 1) % len(self.active)
