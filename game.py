@@ -48,91 +48,91 @@ class Game():
         self.table.update_currentBet(self.bigBlind)
         bettingRoundPreFlop(self)
 
-def bettingRoundPreFlop(self):
-    self.current_player_index = self.UTG()
-    self.table.current_bet = self.bigBlind_Bet
-    self.last_raiser = self.bigBlind()
-    while True:
-        self.current_player = self.players[self.current_player_index]
-        playerTurn(self, self.current_player)
-        self.incrementTurn()
-        if self.check_endRound():
-            break
+    def bettingRoundPreFlop(self):
+        self.current_player_index = self.UTG()
+        self.table.current_bet = self.bigBlind_Bet
+        self.last_raiser = self.bigBlind()
+        while True:
+            self.current_player = self.players[self.current_player_index]
+            playerTurn(self, self.current_player)
+            self.incrementTurn()
+            if self.check_endRound():
+                break
 
-def flop(self):
-    if (len(self.active) == 1):
-        self.endself()
-    self.endRound()
-    self.table.receive(self.deck.deal(3))
-    self.table.display()
-    self.table.displayPot()
-    bettingRoundFlop(self)
-
-def bettingRoundFlop(self):
-    self.current_player_index = self.smallBlind()
-    while True:
-        self.current_player = self.active[self.current_player_index]
-        playerTurn(self, self.current_player)
-        self.incrementTurn()
-        if self.check_endRound():
-            break
-
-def turn(self):
-    if (len(self.active) == 1):
-        self.endself()
-    self.endRound()
-    self.table.receive(self.deck.deal(1))
-    self.table.display()
-    self.table.displayPot()
-    bettingRoundFlop(self)
-
-def bettingRoundTurn(self):
-    self.current_player_index = self.smallBlind()
-    while True:
-        self.current_player = self.active[self.current_player_index]
-        playerTurn(self)
-        self.incrementTurn()
-        if self.check_endRound():
-            break
-
-def river(self):
-    if (len(self.active) == 1):
-        self.endself()
-    self.endRound()
-    self.table.receive(self.deck.deal(1))
-    self.table.display()
-    self.table.displayPot()
-    bettingRoundFlop(self)
-
-def bettingRoundRiver(self):
-    self.current_player_index = self.smallBlind()
-    while True:
-        self.current_player = self.active[self.current_player_index]
-        playerTurn(self)
-        self.incrementTurn()
-        if self.check_endRound():
-            break
-
-def showdown(self):
-    pass
-    
-
-
-def playerTurn(self, player):
-    self.turns_taken += 1
-    player.turn()
-    choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
-    
-    if (choice == "1"):
-        bet = int(input("Enter bet:"))
-        self.table.update_currentBet(bet)
+    def flop(self):
+        if (len(self.active) == 1):
+            self.endself()
+        self.endRound()
+        self.table.receive(self.deck.deal(3))
+        self.table.display()
         self.table.displayPot()
-        self.last_raiser = player
-    if (choice == "2"):
-        self.table.updatepot()
+        bettingRoundFlop(self)
+
+    def bettingRoundFlop(self):
+        self.current_player_index = self.smallBlind()
+        while True:
+            self.current_player = self.active[self.current_player_index]
+            playerTurn(self, self.current_player)
+            self.incrementTurn()
+            if self.check_endRound():
+                break
+
+    def turn(self):
+        if (len(self.active) == 1):
+            self.endself()
+        self.endRound()
+        self.table.receive(self.deck.deal(1))
+        self.table.display()
         self.table.displayPot()
-    if (choice == "3"):
-        self.folded(player)
+        bettingRoundFlop(self)
+
+    def bettingRoundTurn(self):
+        self.current_player_index = self.smallBlind()
+        while True:
+            self.current_player = self.active[self.current_player_index]
+            playerTurn(self)
+            self.incrementTurn()
+            if self.check_endRound():
+                break
+
+    def river(self):
+        if (len(self.active) == 1):
+            self.endself()
+        self.endRound()
+        self.table.receive(self.deck.deal(1))
+        self.table.display()
+        self.table.displayPot()
+        bettingRoundFlop(self)
+
+    def bettingRoundRiver(self):
+        self.current_player_index = self.smallBlind()
+        while True:
+            self.current_player = self.active[self.current_player_index]
+            playerTurn(self)
+            self.incrementTurn()
+            if self.check_endRound():
+                break
+
+    def showdown(self):
+        pass
+        
+
+
+    def playerTurn(self, player):
+        self.turns_taken += 1
+        player.turn()
+        choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
+        
+        if (choice == "1"):
+            bet = int(input("Enter bet:"))
+            self.table.update_currentBet(bet)
+            self.table.displayPot()
+            self.last_raiser = player
+        if (choice == "2"):
+            self.table.updatepot()
+            self.table.displayPot()
+        if (choice == "3"):
+            self.folded(player)
 
     def incrementButton(self):
         self.button = ((self.button + 1 ) % len(self.players))
