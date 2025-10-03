@@ -45,27 +45,39 @@ class Player():
 
 
 class humanPlayer(Player):
-    def turn():
+    def get_action(self):
         choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
         
         if (choice == "1"):
             self.displayChips()
             bet = int(input("Enter bet:"))
             self.updateBet(bet)
-            table.update_currentBet(bet)
             self.displayBet()
             self.displayChips()
-            table.displayPot()
-            self.last_raiser = player
+            return ("Bet", bet)
         if (choice == "2"):
-            player.displayChips()
-            bet = table.current_bet - player.bet
-            player.updateBet(bet)
-            player.displayBet()
-            player.displayChips()
-            table.displayPot()
+            self.displayChips()
+            self.updateBet(bet)
+            self.displayBet()
+            self.displayChips()
+            return ("Call",)
         if (choice == "3"):
-            self.folded(player)
+            return ("Fold",)
 
 class aiPlayer(Player):
-    pass
+    def get_action(self):
+        choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
+        
+        if (choice == "1"):
+            self.displayChips()
+            bet = int(input("Enter bet:"))
+            self.updateBet(bet)
+            self.displayBet()
+            self.displayChips()
+        if (choice == "2"):
+            self.displayChips()
+            self.updateBet(bet)
+            self.displayBet()
+            self.displayChips()
+        if (choice == "3"):
+            self.folded(player)

@@ -46,7 +46,6 @@ class Game():
         self.smallBlind().updateBet(self.smallBlind)
         self.bigBlind().updateBet(self.bigBlind)
         self.table.update_currentBet(self.bigBlind)
-        bettingRoundPreFlop(self)
 
     def bettingRoundPreFlop(self):
         self.current_player_index = self.UTG()
@@ -54,7 +53,7 @@ class Game():
         self.last_raiser = self.bigBlind()
         while True:
             self.current_player = self.players[self.current_player_index]
-            playerTurn(self, self.current_player)
+            self.playerTurn(self, self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -66,13 +65,12 @@ class Game():
         self.table.receive(self.deck.deal(3))
         self.table.display()
         self.table.displayPot()
-        bettingRoundFlop(self)
 
     def bettingRoundFlop(self):
         self.current_player_index = self.smallBlind()
         while True:
             self.current_player = self.active[self.current_player_index]
-            playerTurn(self, self.current_player)
+            self.playerTurn(self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -84,13 +82,12 @@ class Game():
         self.table.receive(self.deck.deal(1))
         self.table.display()
         self.table.displayPot()
-        bettingRoundFlop(self)
 
     def bettingRoundTurn(self):
         self.current_player_index = self.smallBlind()
         while True:
             self.current_player = self.active[self.current_player_index]
-            playerTurn(self)
+            self.playerTurn(self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -102,13 +99,12 @@ class Game():
         self.table.receive(self.deck.deal(1))
         self.table.display()
         self.table.displayPot()
-        bettingRoundFlop(self)
 
     def bettingRoundRiver(self):
         self.current_player_index = self.smallBlind()
         while True:
             self.current_player = self.active[self.current_player_index]
-            playerTurn(self)
+            self.playerTurn(self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -120,18 +116,19 @@ class Game():
 
     def playerTurn(self, player):
         self.turns_taken += 1
-        player.turn()
-        choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
-        
-        if (choice == "1"):
-            bet = int(input("Enter bet:"))
+        action = player.get_action()        
+        if (action[0] == "Bet"):
+            bet = action[1]
+            player.updateChips(-bet)
             self.table.update_currentBet(bet)
             self.table.displayPot()
             self.last_raiser = player
-        if (choice == "2"):
-            self.table.updatepot()
+        if (action[0] == "Call"):
+            bet = self.table.current_bet
+            player.updateChips(-bet)
+            self.table.updatepot(bet)
             self.table.displayPot()
-        if (choice == "3"):
+        if (action[0] == "Fold"):
             self.folded(player)
 
     def incrementButton(self):
