@@ -11,7 +11,7 @@ def main():
     table = Table()
     game = Game(table)
     name = input("Enter name:")
-    player = Player(name, table)
+    player = humanPlayer(name, table)
     deck = Deck()
     game.players.append(player)
     computer = Player("computer", table)

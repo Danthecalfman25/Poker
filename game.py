@@ -170,8 +170,6 @@ class Game():
         self.turns_taken = 0
         self.table.current_bet = 0
         
-    def endself(self):
-        pass
 
     def compareHands(self):
         highest_hand = (-1,)

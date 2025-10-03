@@ -40,8 +40,6 @@ class Player():
         self.updateChips(-bet)
         self.table.updatePot(bet)
 
-    def find_hand(self):
-        self.hand_detection.find_hand()
 
 
 class humanPlayer(Player):
@@ -51,14 +49,8 @@ class humanPlayer(Player):
         if (choice == "1"):
             self.displayChips()
             bet = int(input("Enter bet:"))
-            self.updateBet(bet)
-            self.displayBet()
-            self.displayChips()
             return ("Bet", bet)
         if (choice == "2"):
-            self.displayChips()
-            self.updateBet(bet)
-            self.displayBet()
             self.displayChips()
             return ("Call",)
         if (choice == "3"):
