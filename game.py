@@ -67,7 +67,7 @@ class Game():
 
     def flop(self):
         if (len(self.active) == 1):
-            self.endself()
+            self.end_game()
         self.endRound()
         self.table.receive(self.deck.deal(3))
         self.table.display()
@@ -84,7 +84,7 @@ class Game():
 
     def turn(self):
         if (len(self.active) == 1):
-            self.endself()
+            self.end_game()
         self.endRound()
         self.table.receive(self.deck.deal(1))
         self.table.display()
@@ -101,7 +101,7 @@ class Game():
 
     def river(self):
         if (len(self.active) == 1):
-            self.endself()
+            self.end_game()
         self.endRound()
         self.table.receive(self.deck.deal(1))
         self.table.display()
@@ -146,6 +146,9 @@ class Game():
         self.current_player_index += -1
     
     def resetPlayers(self):
+        for player in self.players:
+            if player.chips == 0:
+                self.players.remove(player)
         self.active = self.players[:]
     
     def UTG(self):
@@ -200,3 +203,13 @@ class Game():
     
     def incrementTurn(self):
         self.current_player_index = (self.current_player_index + 1) % len(self.active)
+
+    def check_for_winner(self):
+        if len(self.active) == 1:
+            winnings = self.table.pot
+            self.table.updatePot(-winnings)
+            self.active[0].updateChips(winnings)
+            return True
+        
+    def end_game(self):
+        self.resetPlayers
