@@ -7,6 +7,7 @@ from table import *
 class Game():
     def __init__(self, table):
         self.deck = Deck()
+        self.judge = Hand_Detection()
         self.players = []
         self.active = []
         self.button = 0
@@ -33,13 +34,20 @@ class Game():
     
     def play(self, player1, player2):
         self.preflop()
-        self.bettingRoundPreFlop()
+        if self.bettingRoundPreFlop():
+            return
         self.flop()
-        self.bettingRoundFlop
+        if self.bettingRoundFlop:
+            return
         self.turn()
-        self.bettingRoundTurn
+        if self.bettingRoundTurn:
+            return
         self.river()
-        self.bettingRoundRiver()
+        if self.bettingRoundRiver():
+            return
+        self.showdown()
+        return
+        
 
     def preflop(self):
         #deal 2 card to each player
@@ -117,7 +125,21 @@ class Game():
                 break
 
     def showdown(self):
-        pass
+        judge = Hand_Detection()
+        highest_hand = (-1,)
+        winner = None
+        for player in self.active:
+            hand = judge.findHand(player.hand, self.table.community)
+            player.final_hand = []
+            player.final_hand.append(self.hand_rankings.index(hand[0]))
+            for i in range(1, len(hand)):
+                player.final_hand.append(self.ranks.index(hand[i]))
+            player.final_hand = tuple(player.final_hand)
+            if player.final_hand > highest_hand:
+                highest_hand = player.final_hand
+                winner = player
+
+        return winner
         
 
 
@@ -179,27 +201,7 @@ class Game():
         self.last_raiser = None
         self.turns_taken = 0
         self.table.current_bet = 0
-        
-
-    def compareHands(self):
-        highest_hand = (-1,)
-        winner = None
-        for player in self.active:
-            hand = player.findHand()
-            player.final_hand = []
-            player.final_hand.append(self.hand_rankings.index(hand[0]))
-            for i in range(1, len(hand)):
-                player.final_hand.append(self.ranks.index(hand[i]))
-            player.final_hand = tuple(player.final_hand)
-            
-            
-            
-        for player in self.active:
-            if player.final_hand > highest_hand:
-                highest_hand = player.final_hand
-                winner = player
-
-        return winner
+ 
     
     def incrementTurn(self):
         self.current_player_index = (self.current_player_index + 1) % len(self.active)
@@ -213,3 +215,7 @@ class Game():
         
     def end_game(self):
         self.resetPlayers
+        self.incrementButton
+        self.play
+        for player in self.players:
+            player.empty_hand
