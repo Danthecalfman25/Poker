@@ -20,7 +20,7 @@ class Player():
         for card in cards:
             self.hand.append(card)
             
-    def display(self):
+    def display_hand(self):
         print(f"{self.name}'s cards:")
         for card in self.hand:
             card.display()
@@ -30,9 +30,7 @@ class Player():
 
     def updateChips(self, change):
         self.chips += change
-    
-    def displayBet(self):
-        print(self.bet)
+
 
 
 
@@ -53,18 +51,4 @@ class humanPlayer(Player):
 
 class aiPlayer(Player):
     def get_action(self):
-        choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
-        
-        if (choice == "1"):
-            self.displayChips()
-            bet = int(input("Enter bet:"))
-            self.updateBet(bet)
-            self.displayBet()
-            self.displayChips()
-        if (choice == "2"):
-            self.displayChips()
-            self.updateBet(bet)
-            self.displayBet()
-            self.displayChips()
-        if (choice == "3"):
-            self.folded(player)
+        pass

@@ -1,4 +1,4 @@
-from self.deck import *
+from deck import *
 from card import *
 from player import *
 from table import *
@@ -32,7 +32,14 @@ class Game():
 ]
     
     def play(self, player1, player2):
-        pass
+        self.preflop()
+        self.bettingRoundPreFlop()
+        self.flop()
+        self.bettingRoundFlop
+        self.turn()
+        self.bettingRoundTurn
+        self.river()
+        self.bettingRoundRiver()
 
     def preflop(self):
         #deal 2 card to each player

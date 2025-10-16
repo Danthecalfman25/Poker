@@ -21,14 +21,7 @@ def main():
     game.bigBlind = 20
     for player in game.players:
         player.chips = 1000
-    game.preflop()
-    game.bettingRoundPreFlop()
-    game.flop()
-    game.bettingRoundFlop
-    game.turn()
-    game.bettingRoundTurn
-    game.river()
-    game.bettingRoundRiver()
+
 
 
 
