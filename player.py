@@ -14,7 +14,6 @@ class Player():
         self.bet = 0
         self.total_hand = []
         self.final_hand = None
-        self.hand_detection = Hand_Detection(self)
 
 
     def receiveCard(self, cards):
@@ -35,10 +34,6 @@ class Player():
     def displayBet(self):
         print(self.bet)
 
-    def updateBet(self, bet):
-        self.bet += bet
-        self.updateChips(-bet)
-        self.table.updatePot(bet)
 
 
 

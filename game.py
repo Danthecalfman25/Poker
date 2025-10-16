@@ -53,7 +53,7 @@ class Game():
         self.last_raiser = self.bigBlind()
         while True:
             self.current_player = self.players[self.current_player_index]
-            self.current_player.get_action(self, self.current_player)
+            self.playerTurn(self, self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -70,7 +70,7 @@ class Game():
         self.current_player_index = self.smallBlind()
         while True:
             self.current_player = self.active[self.current_player_index]
-            self.current_player.get_action(self.current_player)
+            self.playerTurn(self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -87,7 +87,7 @@ class Game():
         self.current_player_index = self.smallBlind()
         while True:
             self.current_player = self.active[self.current_player_index]
-            self.current_player.get_action(self.current_player)
+            self.playerTurn(self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
@@ -104,7 +104,7 @@ class Game():
         self.current_player_index = self.smallBlind()
         while True:
             self.current_player = self.active[self.current_player_index]
-            self.current_player.get_action(self.current_player)
+            self.playerTurn(self.current_player)
             self.incrementTurn()
             if self.check_endRound():
                 break
