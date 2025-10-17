@@ -23,7 +23,7 @@ class Table():
     def displayPot(self):
         print("Pot: ", self.pot)
 
-    def updateCurrent_bet(self, bet):
-        self.current_bet += bet
+    def update_bet_in_round(self, bet):
+        self.bet_in_round += bet
 
     

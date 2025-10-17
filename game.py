@@ -94,6 +94,7 @@ class Game():
         self.table.displayPot()
 
     def bettingRound(self, stage):
+        
         if stage == "Preflop":
             self.current_player_index = self.UTG()
         else:
@@ -144,11 +145,11 @@ class Game():
         if (action[0] == "Bet"):
             bet = action[1]
             player.updateChips(-bet)
-            self.table.update_currentBet(bet)
+            self.table.update_bet_in_round(bet)
             self.table.displayPot()
             self.last_raiser = player
         if (action[0] == "Call"):
-            bet = self.table.current_bet
+            bet = self.table.current_bet - player.bet_in_round
             player.updateChips(-bet)
             self.table.updatepot(bet)
             self.table.displayPot()
@@ -190,6 +191,9 @@ class Game():
         self.last_raiser = None
         self.turns_taken = 0
         self.table.current_bet = 0
+        for player in self.active:
+            player.bet_in_round = 0
+        
  
     def incrementTurn(self):
         self.current_player_index = (self.current_player_index + 1) % len(self.active)

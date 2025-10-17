@@ -13,7 +13,7 @@ def main():
     name = input("Enter name:")
     player = humanPlayer(name, table)
     game.players.append(player)
-    computer = Player("computer", table)
+    computer = humanPlayer("computer", table)
     game.players.append(computer)
     game.smallBlind_Bet = 10
     game.bigBlind_Bet = 20

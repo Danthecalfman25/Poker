@@ -12,6 +12,7 @@ class Player():
         self.name = name
         self.chips = 0
         self.bet = 0
+        self.bet_in_round = 0
         self.total_hand = []
         self.final_hand = None
 
