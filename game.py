@@ -32,7 +32,14 @@ class Game():
     "Royal Flush"
 ]
     
-    def play(self, player1, player2):
+    def play_hand(self):
+        self.resetPlayers()
+        self.resetGame()
+        self.resetTable
+        self.deck = Deck()
+        self.deck.shuffle()
+        self.smallBlind().updateBet(self.smallBlind)
+        self.bigBlind().updateBet(self.bigBlind)
         self.preflop()
         if self.bettingRoundPreFlop():
             return
@@ -46,20 +53,35 @@ class Game():
         if self.bettingRoundRiver():
             return
         self.showdown()
-        return
-        
+        self.end_game()
+
+    
+    def resetPlayers(self):
+        for player in self.players:
+            if player.chips == 0:
+                self.players.remove(player)
+        self.active = self.players[:]
+    
+    def resetGame(self):
+        self.current_player_index = 0
+        self.current_player = None
+        self.last_raiser = None
+        self.turns_taken = 0
+        self.incrementButton()
+
+    def resetTable(self):
+        self.table.community.clear()
+        self.table.current_bet = 0
+        self.table.pot = 0
+
 
     def preflop(self):
         #deal 2 card to each player
-        self.resetPlayers()
-        self.deck.shuffle()
         print("Dealing:\n")
         for player in self.active:
             player.receive(self.deck.deal(2))
             player.display()
             print("\n")
-        self.smallBlind().updateBet(self.smallBlind)
-        self.bigBlind().updateBet(self.bigBlind)
         self.table.update_currentBet(self.bigBlind)
 
     def bettingRoundPreFlop(self):
@@ -138,8 +160,9 @@ class Game():
             if player.final_hand > highest_hand:
                 highest_hand = player.final_hand
                 winner = player
-
-        return winner
+            for player in self.active:
+                if winner != player:
+                    self.active.remove()
         
 
 
@@ -167,11 +190,7 @@ class Game():
         self.active.remove(other)
         self.current_player_index += -1
     
-    def resetPlayers(self):
-        for player in self.players:
-            if player.chips == 0:
-                self.players.remove(player)
-        self.active = self.players[:]
+    
     
     def UTG(self):
         return self.players[(self.button + 3) % len(self.players)]
@@ -208,14 +227,10 @@ class Game():
 
     def check_for_winner(self):
         if len(self.active) == 1:
-            winnings = self.table.pot
-            self.table.updatePot(-winnings)
-            self.active[0].updateChips(winnings)
-            return True
+            self.end_game()
         
     def end_game(self):
-        self.resetPlayers
-        self.incrementButton
-        self.play
-        for player in self.players:
-            player.empty_hand
+        winnings = self.table.pot
+        self.table.updatePot(-winnings)
+        self.active[0].updateChips(winnings)
+        return True

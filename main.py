@@ -12,13 +12,11 @@ def main():
     game = Game(table)
     name = input("Enter name:")
     player = humanPlayer(name, table)
-    deck = Deck()
     game.players.append(player)
     computer = Player("computer", table)
     game.players.append(computer)
-    game.resetPlayers()
-    game.smallBlind = 10
-    game.bigBlind = 20
+    game.smallBlind_Bet = 10
+    game.bigBlind_Bet = 20
     for player in game.players:
         player.chips = 1000
 
