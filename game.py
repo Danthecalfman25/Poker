@@ -160,9 +160,7 @@ class Game():
             if player.final_hand > highest_hand:
                 highest_hand = player.final_hand
                 winner = player
-            for player in self.active:
-                if winner != player:
-                    self.active.remove()
+            return winner
         
 
 
@@ -229,8 +227,8 @@ class Game():
         if len(self.active) == 1:
             self.end_game()
         
-    def end_game(self):
+    def end_game(self, winner):
         winnings = self.table.pot
         self.table.updatePot(-winnings)
-        self.active[0].updateChips(winnings)
+        winner.updateChips(winnings)
         return True

@@ -19,6 +19,8 @@ def main():
     game.bigBlind_Bet = 20
     for player in game.players:
         player.chips = 1000
+    while game.players > 1:
+        game.play_hand
 
 
 
