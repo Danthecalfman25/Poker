@@ -160,7 +160,7 @@ class Game():
             if player.final_hand > highest_hand:
                 highest_hand = player.final_hand
                 winner = player
-            return winner
+        return winner
         
 
 
