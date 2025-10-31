@@ -94,11 +94,12 @@ class Game():
         self.table.displayPot()
 
     def bettingRound(self, stage):
-        
         if stage == "Preflop":
             self.current_player_index = self.UTG()
+            self.last_raiser = self.bigBlind()
         else:
             self.current_player_index = self.smallBlind()
+            self.last_raiser = self.active[self.button]
         while True:
             self.current_player = self.active[self.current_player_index]
             self.playerTurn(self.current_player)
@@ -143,12 +144,18 @@ class Game():
         self.turns_taken += 1
         action = player.get_action()        
         if (action[0] == "Bet"):
+            for person in self.active:
+                person.called_current_bet = False
+            self.called_current_bet = True
             bet = action[1]
             player.updateChips(-bet)
             self.table.update_bet_in_round(bet)
             self.table.displayPot()
             self.last_raiser = player
+            if player.chips == 0:
+                player.all_in = True
         if (action[0] == "Call"):
+            player.called_current_bet = True
             bet = self.table.current_bet - player.bet_in_round
             player.updateChips(-bet)
             self.table.updatepot(bet)
@@ -173,17 +180,12 @@ class Game():
         return self.players[(self.button + 1) % len(self.players)]
     
     def check_endRound(self):
-        target_bet = None
-        if self.turns_taken < len(self.active):
-                return False
+        if (self.current_player != self.last_raiser): 
+            return False
         for player in self.active:
-            if player.chips > 0:
-                target_bet = player.bet
-                break
-        
-        for player in self.active:
-            if player.chips == 0: continue
-            if player.bet != target_bet:
+            if self.current_player.bet_in_round != player.bet_in_round:
+                if player.all_in:
+                    continue
                 return False
         return True
 
@@ -193,6 +195,7 @@ class Game():
         self.table.current_bet = 0
         for player in self.active:
             player.bet_in_round = 0
+            player.all_in = False
         
  
     def incrementTurn(self):
