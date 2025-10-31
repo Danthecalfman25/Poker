@@ -141,7 +141,12 @@ class Game():
         return winner
         
     def playerTurn(self, player):
+        if player.all_in == True:
+            return
         self.turns_taken += 1
+        valid_actions = [1]
+        if player.bet_in_round == self.table.current_bet:
+            valid_actions.append(2)
         action = player.get_action()        
         if (action[0] == "Bet"):
             for person in self.active:
