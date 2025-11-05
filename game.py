@@ -38,8 +38,8 @@ class Game():
         self.resetTable
         self.deck = Deck()
         self.deck.shuffle()
-        self.smallBlind().updateBet(self.smallBlind)
-        self.bigBlind().updateBet(self.bigBlind)
+        self.postBlinds()
+
         self.preflop()
         if self.bettingRound("Preflop"):
             return
@@ -55,6 +55,28 @@ class Game():
         self.showdown()
         self.end_game()
 
+    def postBlinds(self):
+        sb = self.smallBlind()
+        sbet = min (sb.chips, self.smallBlind_Bet)
+        sb.updateChips(-sbet)
+        self.table.updatePot(sbet)
+        sb.bet_in_round = sbet
+        self.isAllIn(sb)
+        
+        
+        
+        bb = self.bigBlind()
+        bbet = min (bb.chips, self.bigBlind_Bet)
+        bb.updateChips(-bbet)
+        self.table.updatePot(bbet)
+        bb.bet_in_round = bbet
+        self.isAllIn(bb)
+
+        self.table.current_bet = max(sbet, bbet)
+
+    def isAllIn(self, player):
+        if player.chips == 0:
+            player.all_in = True
     
     def resetPlayers(self):
         for player in self.players:
@@ -144,11 +166,22 @@ class Game():
         if player.all_in == True:
             return
         self.turns_taken += 1
-        valid_actions = [1]
-        if player.bet_in_round == self.table.current_bet:
-            valid_actions.append(2)
-        action = player.get_action()        
-        if (action[0] == "Bet"):
+        valid_actions = []
+        if self.table.current_bet > player.bet_in_round:
+
+            valid_actions.append ("Fold")
+            valid_actions.append("Call")
+            if player.chips > (self.table.current_bet - player.bet_in_round):
+                valid_actions.append("Raise")
+        else:
+            valid_actions.append("Check")
+
+            if player.chips > 0:
+                valid_actions.append("Bet")
+        
+        action = player.get_action(valid_actions)
+                
+        if (action[0] == "Bet" or action[0] == "Raise"):
             for person in self.active:
                 person.called_current_bet = False
             self.called_current_bet = True
