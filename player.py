@@ -15,7 +15,6 @@ class Player():
         self.bet_in_round = 0
         self.total_hand = []
         self.final_hand = None
-        self.called_current_bet = False
         self.all_in = False
 
 

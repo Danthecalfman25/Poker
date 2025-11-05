@@ -180,26 +180,39 @@ class Game():
                 valid_actions.append("Bet")
         
         action = player.get_action(valid_actions)
+        action_type = action[0]
                 
-        if (action[0] == "Bet" or action[0] == "Raise"):
-            for person in self.active:
-                person.called_current_bet = False
-            self.called_current_bet = True
+        if (action_type == "Bet" or action_type == "Raise"):
             bet = action[1]
             player.updateChips(-bet)
-            self.table.update_bet_in_round(bet)
-            self.table.displayPot()
+            self.table.updatePot(bet)
+            player.bet_in_round += bet
+
+            self.table.current_bet = player.bet_in_round
             self.last_raiser = player
-            if player.chips == 0:
-                player.all_in = True
-        if (action[0] == "Call"):
-            player.called_current_bet = True
-            bet = self.table.current_bet - player.bet_in_round
             player.updateChips(-bet)
-            self.table.updatepot(bet)
-            self.table.displayPot()
-        if (action[0] == "Fold"):
-            self.folded(player)
+            self.isAllIn(player)
+            print(f"{player.name} bets/raises to {player.bet_in_round}")
+            
+        elif (action_type == "Call"):
+            amount_to_call = self.table.current_bet - player.bet_in_round
+
+            player.updateChips(-amount_to_call)
+            self.table.updatePot(amount_to_call)
+            player.bet_in_round += amount_to_call
+
+            self.isAllIn(player)
+            print(f"{player.name} calls {amount_to_call}")
+
+        elif action_type == "Check":
+            print(f"{player.name} checks.")
+
+        elif action_type == "Fold":
+            print(f"{player.name} checks.")
+
+        elif action_type == "Fold":
+            print(f"{player.name} folds.")
+        self.folded(player)
 
     def incrementButton(self):
         self.button = ((self.button + 1 ) % len(self.players))
