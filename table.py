@@ -5,7 +5,7 @@ class Table():
     def __init__(self):
         self.community =[]
         self.current_bet = 0
-        self.pot = 0
+        self.pots = []
         
     
     def receive(self, cards):
@@ -21,7 +21,10 @@ class Table():
         self.pot += bet
     
     def displayPot(self):
-        print("Pot: ", self.pot)
+        total = 0
+        for pot in self.pots:
+            total += pot
+            
 
     def update_bet_in_round(self, bet):
         self.bet_in_round += bet

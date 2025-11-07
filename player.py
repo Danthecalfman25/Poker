@@ -16,6 +16,7 @@ class Player():
         self.total_hand = []
         self.final_hand = None
         self.all_in = False
+        self.total_bet = 0
 
 
     def receiveCard(self, cards):
@@ -32,6 +33,9 @@ class Player():
 
     def updateChips(self, change):
         self.chips += change
+    
+    def clear_hand(self):
+        pass
     
     
 

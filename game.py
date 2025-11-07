@@ -18,6 +18,7 @@ class Game():
         self.last_raiser = None
         self.turns_taken = 0
         self.table = table
+        self.last_raise_amount = 0
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         self.hand_rankings = [
     "High Card",
@@ -54,6 +55,9 @@ class Game():
             return
         self.showdown()
         self.end_game()
+        for player in self.players:
+            player.total_bet = 0
+            player.clear_hand()
 
     def postBlinds(self):
         sb = self.smallBlind()
@@ -116,6 +120,7 @@ class Game():
         self.table.displayPot()
 
     def bettingRound(self, stage):
+        self.last_raise_amount = self.bigBlind_Bet
         if stage == "Preflop":
             self.current_player_index = self.UTG()
             self.last_raiser = self.bigBlind()
@@ -148,8 +153,6 @@ class Game():
 
     def showdown(self):
         judge = Hand_Detection()
-        highest_hand = (-1,)
-        winner = None
         for player in self.active:
             hand = judge.findHand(player.hand, self.table.community)
             player.final_hand = []
@@ -157,10 +160,7 @@ class Game():
             for i in range(1, len(hand)):
                 player.final_hand.append(self.ranks.index(hand[i]))
             player.final_hand = tuple(player.final_hand)
-            if player.final_hand > highest_hand:
-                highest_hand = player.final_hand
-                winner = player
-        return winner
+
         
     def playerTurn(self, player):
         if player.all_in == True:
@@ -179,7 +179,12 @@ class Game():
             if player.chips > 0:
                 valid_actions.append("Bet")
         
-        action = player.get_action(valid_actions)
+        max_bet = player.chips
+        min_bet = self.bigBlind_Bet
+        min_raise = self.table.current_bet + self.last_raise_amount
+        amount_to_call =self.table.current_bet - player.bet_in_round
+
+        action = player.get_action(valid_actions, min_bet, min_raise, max_bet)
         action_type = action[0]
                 
         if (action_type == "Bet" or action_type == "Raise"):
@@ -187,7 +192,7 @@ class Game():
             player.updateChips(-bet)
             self.table.updatePot(bet)
             player.bet_in_round += bet
-
+            self.last_raise_amount = bet
             self.table.current_bet = player.bet_in_round
             self.last_raiser = player
             player.updateChips(-bet)
@@ -207,8 +212,6 @@ class Game():
         elif action_type == "Check":
             print(f"{player.name} checks.")
 
-        elif action_type == "Fold":
-            print(f"{player.name} checks.")
 
         elif action_type == "Fold":
             print(f"{player.name} folds.")
@@ -245,6 +248,7 @@ class Game():
         self.turns_taken = 0
         self.table.current_bet = 0
         for player in self.active:
+            player.total_bet += player.bet_in_round
             player.bet_in_round = 0
             player.all_in = False
         
@@ -257,7 +261,54 @@ class Game():
             self.end_game()
         
     def end_game(self, winner):
-        winnings = self.table.pot
-        self.table.updatePot(-winnings)
-        winner.updateChips(winnings)
-        return True
+        if len(self.active) == 1:
+            winner = self.active[0]
+
+            total_winnings = sum(pot['amount'] for pot in self.table.pots)
+            winner.updateChips(total_winnings)
+            print(f"{winner.name} wins {total_winnings}")
+            return
+        
+        for pot in self.table.pots:
+            pot_winners = []
+            best_hand_in_pot = (-1,)
+
+            for eligible_player in pot['eligible_players']:
+                if eligible_player in self.active:
+                    if eligible_player.final_hand > best_hand_in_pot:
+                        best_hand_in_pot = eligible_player.final_hand
+                        pot_winners.clear()
+                        pot_winners.append(eligible_player)
+                    elif eligible_player.final_hand == best_hand_in_pot:
+                        pot_winners.append(eligible_player)
+                
+            if len(pot_winners) > 0:
+                winnings_per_player = pot['amount'] // len(pot_winners)
+
+                for winner in pot_winners:
+                    winner.updateChips(winnings_per_player)
+                    print(f"{winner.name} wins {winnings_per_player} from a pot.")
+            
+
+    def compute_pots(self):
+        eligible_players = self.active[:]
+        last_bet_level = 0
+        while len(eligible_players) > 0 :
+            min_bet = 10000000000000000
+            for player in eligible_players:
+                min_bet = min(player.total_bet, min_bet)
+            bet_per_player = min_bet - last_bet_level
+            pot_size = bet_per_player * len(eligible_players)
+            self.table.pots.append({
+                        'amount': pot_size,
+                        'eligible_players': eligible_players[:]
+                    })  
+            
+            last_bet_level = min_bet
+
+            eligible_players = [p for p in eligible_players if p.total_bet > min_bet]
+
+                
+            
+            
+
