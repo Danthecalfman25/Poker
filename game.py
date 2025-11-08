@@ -36,7 +36,7 @@ class Game():
     def play_hand(self):
         self.resetPlayers()
         self.resetGame()
-        self.resetTable
+        self.table.reset
         self.deck = Deck()
         self.deck.shuffle()
         self.postBlinds()
@@ -53,12 +53,14 @@ class Game():
         self.river()
         if self.bettingRound("River"):
             return
+        self.compute_pots()
         self.showdown()
         self.end_game()
         self.players = [p for p in self.players if p.chips > 0]
         for player in self.players:
             player.total_bet = 0
             player.clear_hand()
+            player.all_in = False
 
 
     def postBlinds(self):
@@ -97,10 +99,6 @@ class Game():
         self.turns_taken = 0
         self.incrementButton()
 
-    def resetTable(self):
-        self.table.community.clear()
-        self.table.current_bet = 0
-        self.table.pot = 0
 
 
     def preflop(self):
@@ -190,14 +188,16 @@ class Game():
         action_type = action[0]
                 
         if (action_type == "Bet" or action_type == "Raise"):
-            bet = action[1]
-            player.updateChips(-bet)
-            self.table.updatePot(bet)
-            player.bet_in_round += bet
-            self.last_raise_amount = bet
+            total_bet = action[1]
+
+            amount_to_add = total_bet - player.bet_in_round
+            self.last_raise_amount = total_bet - self.table.current_bet
+            player.updateChips(-amount_to_add)
+            self.table.updatePot(amount_to_add)
+            player.bet_in_round = total_bet
+
             self.table.current_bet = player.bet_in_round
             self.last_raiser = player
-            player.updateChips(-bet)
             self.isAllIn(player)
             print(f"{player.name} bets/raises to {player.bet_in_round}")
             
@@ -217,7 +217,7 @@ class Game():
 
         elif action_type == "Fold":
             print(f"{player.name} folds.")
-        self.folded(player)
+            self.folded(player)
 
     def incrementButton(self):
         self.button = ((self.button + 1 ) % len(self.players))
@@ -252,7 +252,6 @@ class Game():
         for player in self.active:
             player.total_bet += player.bet_in_round
             player.bet_in_round = 0
-            player.all_in = False
         
  
     def incrementTurn(self):
@@ -269,6 +268,7 @@ class Game():
             total_winnings = sum(pot['amount'] for pot in self.table.pots)
             winner.updateChips(total_winnings)
             print(f"{winner.name} wins {total_winnings}")
+            self.table.pot = 0
             return
         
         for pot in self.table.pots:
@@ -289,7 +289,9 @@ class Game():
 
                 for winner in pot_winners:
                     winner.updateChips(winnings_per_player)
+                    self.table.pot -= winnings_per_player
                     print(f"{winner.name} wins {winnings_per_player} from a pot.")
+            self.table.pot = 0
             
 
     def compute_pots(self):

@@ -5,6 +5,7 @@ class Table():
     def __init__(self):
         self.community =[]
         self.current_bet = 0
+        self.pot = 0
         self.pots = []
         
     
@@ -29,4 +30,8 @@ class Table():
     def update_bet_in_round(self, bet):
         self.bet_in_round += bet
 
-    
+    def reset(self):
+        self.community.clear()
+        self.pots.clear()
+        self.total_pot = 0
+        self.current_bet = 0

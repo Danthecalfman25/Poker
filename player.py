@@ -35,7 +35,8 @@ class Player():
         self.chips += change
     
     def clear_hand(self):
-        pass
+        self.hand = []
+        self.total_hand = []
     
     
 
