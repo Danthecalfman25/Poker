@@ -23,7 +23,7 @@ class Player():
         for card in cards:
             self.hand.append(card)
             
-    def display_hand(self):
+    def displayHand(self):
         print(f"{self.name}'s cards:")
         for card in self.hand:
             card.display()

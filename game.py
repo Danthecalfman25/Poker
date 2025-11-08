@@ -105,10 +105,9 @@ class Game():
         #deal 2 card to each player
         print("Dealing:\n")
         for player in self.active:
-            player.receive(self.deck.deal(2))
-            player.display()
+            player.receiveCard(self.deck.deal(2))
+            player.displayHand()
             print("\n")
-        self.table.update_currentBet(self.bigBlind)
 
 
     def flop(self):
@@ -122,10 +121,10 @@ class Game():
     def bettingRound(self, stage):
         self.last_raise_amount = self.bigBlind_Bet
         if stage == "Preflop":
-            self.current_player_index = self.UTG()
+            self.current_player_index = self.UTG_index()
             self.last_raiser = self.bigBlind()
         else:
-            self.current_player_index = self.smallBlind()
+            self.current_player_index = self.smallBlind_index()
             self.last_raiser = self.active[self.button]
         while True:
             self.current_player = self.active[self.current_player_index]
@@ -234,6 +233,15 @@ class Game():
 
     def smallBlind(self):
         return self.players[(self.button + 1) % len(self.players)]
+    
+    def UTG_index(self):
+        return (self.button + 3) % len(self.players)
+    
+    def bigBlind_index(self):
+        return (self.button + 2) % len(self.players)
+
+    def smallBlind_index(self):
+        return (self.button + 1) % len(self.players)
     
     def check_endRound(self):
         if (self.current_player != self.last_raiser): 
