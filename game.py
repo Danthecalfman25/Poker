@@ -55,9 +55,11 @@ class Game():
             return
         self.showdown()
         self.end_game()
+        self.players = [p for p in self.players if p.chips > 0]
         for player in self.players:
             player.total_bet = 0
             player.clear_hand()
+
 
     def postBlinds(self):
         sb = self.smallBlind()
