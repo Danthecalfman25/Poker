@@ -22,9 +22,7 @@ class Table():
         self.pot += bet
     
     def displayPot(self):
-        total = 0
-        for pot in self.pots:
-            total += pot
+        print(f"Pot: {self.pot}")
             
 
     def update_bet_in_round(self, bet):
