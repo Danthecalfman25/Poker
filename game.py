@@ -36,7 +36,7 @@ class Game():
     def play_hand(self):
         self.resetPlayers()
         self.resetGame()
-        self.table.reset
+        self.table.reset()
         self.deck = Deck()
         self.deck.shuffle()
         self.postBlinds()
