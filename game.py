@@ -21,10 +21,10 @@ class Game():
         self.last_raise_amount = 0
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         self.hand_rankings = [
-    "High Card",
-    "One Pair",
+    "HighCard",
+    "Pair",
     "Two Pair",
-    "Three of a Kind",
+    "Trips",
     "Straight",
     "Flush",
     "Full House",
@@ -153,7 +153,7 @@ class Game():
     def showdown(self):
         judge = Hand_Detection()
         for player in self.active:
-            hand = judge.findHand(player.hand, self.table.community)
+            hand = judge.find_hand(player.hand, self.table.community)
             player.final_hand = []
             player.final_hand.append(self.hand_rankings.index(hand[0]))
             for i in range(1, len(hand)):
@@ -183,7 +183,7 @@ class Game():
         min_raise = self.table.current_bet + self.last_raise_amount
         amount_to_call =self.table.current_bet - player.bet_in_round
 
-        action = player.get_action(valid_actions, min_bet, min_raise, max_bet)
+        action = player.get_action()
         action_type = action[0]
                 
         if (action_type == "Bet" or action_type == "Raise"):
@@ -269,7 +269,7 @@ class Game():
         if len(self.active) == 1:
             self.end_game()
         
-    def end_game(self, winner):
+    def end_game(self):
         if len(self.active) == 1:
             winner = self.active[0]
 
@@ -321,6 +321,47 @@ class Game():
             eligible_players = [p for p in eligible_players if p.total_bet > min_bet]
 
                 
-            
-            
+"""
+def playerTurn(self, player):
+        if player.all_in == True:
+            return
+        self.turns_taken += 1
+        valid_actions = []
+        if self.table.current_bet > player.bet_in_round:
 
+            valid_actions.append ("Fold")
+            valid_actions.append("Call")
+            if player.chips > (self.table.current_bet - player.bet_in_round):
+                valid_actions.append("Raise")
+        else:
+            valid_actions.append("Check")
+
+            if player.chips > 0:
+                valid_actions.append("Bet")
+        
+        max_bet = player.chips
+        min_bet = self.bigBlind_Bet
+        min_raise = self.table.current_bet + self.last_raise_amount
+        amount_to_call =self.table.current_bet - player.bet_in_round
+
+        action = player.get_action(valid_actions, min_bet, min_raise, max_bet)
+        action_type = action[0]
+                
+        if (action_type == "Bet" or action_type == "Raise"):
+            total_bet = action[1]
+
+            amount_to_add = total_bet - player.bet_in_round
+            self.last_raise_amount = total_bet - self.table.current_bet
+            player.updateChips(-amount_to_add)
+            self.table.updatePot(amount_to_add)
+            player.bet_in_round = total_bet
+
+            self.table.current_bet = player.bet_in_round
+            self.last_raiser = player
+            self.isAllIn(player)
+            print(f"{player.name} bets/raises to {player.bet_in_round}")
+            
+        elif (action_type == "Call"):
+            amount_to_call = self.table.current_bet - player.bet_in_round
+
+"""
