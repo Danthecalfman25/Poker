@@ -177,38 +177,58 @@ class Game():
 
             if player.chips > 0:
                 valid_actions.append("Bet")
+        """
         
-        max_bet = player.chips
-        min_bet = self.bigBlind_Bet
         min_raise = self.table.current_bet + self.last_raise_amount
         amount_to_call =self.table.current_bet - player.bet_in_round
-
-        action = player.get_action()
-        action_type = action[0]
+        """
+        action_type = player.get_action(valid_actions)
                 
-        if (action_type == "Bet" or action_type == "Raise"):
-            total_bet = action[1]
+        if (action_type == "Bet"):
+            max_bet = player.chips
+            min_bet = self.bigBlind_Bet
+            bet_amount = player.get_bet_amount(min_bet, max_bet)
 
-            amount_to_add = total_bet - player.bet_in_round
-            self.last_raise_amount = total_bet - self.table.current_bet
-            player.updateChips(-amount_to_add)
-            self.table.updatePot(amount_to_add)
-            player.bet_in_round = total_bet
+            self.last_raise_amount = bet_amount
 
+            player.updateChips(-bet_amount)
+            self.table.updatePot(bet_amount)
+            player.bet_in_round += bet_amount
             self.table.current_bet = player.bet_in_round
             self.last_raiser = player
             self.isAllIn(player)
             print(f"{player.name} bets/raises to {player.bet_in_round}")
-            
+        
+        elif (action_type == "Raise"):
+            amount_to_call = self.table.current_bet - player.bet_in_round
+            min_raise_total = self.table.current_bet + self.last_raise_amount
+            max_raise_total = player.chips + player.bet_in_round
+
+            min_raise_total = min(min_raise_total, max_raise_total)
+
+            total_bet = player.get_bet_amount(min_raise_total, max_raise_total)
+
+            new_raise_amount = total_bet - self.table.current_bet
+            self.last_raise_amount - new_raise_amount
+            chips_to_move = total_bet - player.bet_in_round
+            player.updateChips(-chips_to_move)
+            self.table.updatePot(chips_to_move)
+            player.bet_in_round += total_bet
+            self.table.current_bet = player.bet_in_round
+            self.last_raiseer = player
+            self.isAllIn(player)
+            print(f"{player.name} raises to {total_bet}")
+
         elif (action_type == "Call"):
             amount_to_call = self.table.current_bet - player.bet_in_round
 
-            player.updateChips(-amount_to_call)
-            self.table.updatePot(amount_to_call)
-            player.bet_in_round += amount_to_call
+            chips_to_move = min (amount_to_call, player.chips)
+            player.updateChips(-chips_to_move)
+            self.table.updatePot(chips_to_move)
+            player.bet_in_round += chips_to_move
 
             self.isAllIn(player)
-            print(f"{player.name} calls {amount_to_call}")
+            print(f"{player.name} calls {chips_to_move}")
 
         elif action_type == "Check":
             print(f"{player.name} checks.")
