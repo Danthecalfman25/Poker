@@ -182,7 +182,8 @@ class Game():
         min_raise = self.table.current_bet + self.last_raise_amount
         amount_to_call =self.table.current_bet - player.bet_in_round
         """
-        action_type = player.get_action(valid_actions)
+        amount_to_call = self.table.current_bet - player.bet_in_round
+        action_type = player.get_action(valid_actions, amount_to_call=amount_to_call, pot=self.table.pot)
                 
         if (action_type == "Bet"):
             max_bet = player.chips

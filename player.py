@@ -43,21 +43,34 @@ class Player():
 
 
 
-
 class humanPlayer(Player):
-    def get_action(self):
-        choice = input("1.Bet/Raise\n2.Call/Check\n3.Fold\n:")
+    def get_action(self, valid_actions, amount_to_call = 0, pot = 0):
+        print(f"{self.name}:\nYour Cards: {self.hand}\nCommunity Cards:{self.community}:\nAmount_to_call: {amount_to_call}   Pot:{pot}")
+        print("\nYour options are:")
+        for i, action in enumerate(valid_actions):
+            print(f"{i+1}. {action}")
         
-        if (choice == "1"):
-            self.displayChips()
-            bet = int(input("Enter bet:"))
-            return ("Bet", bet)
-        if (choice == "2"):
-            self.displayChips()
-            return ("Call",)
-        if (choice == "3"):
-            return ("Fold",)
-
+        while True:
+            try:
+                choice_index = int(input("Enter choice number: ")) - 1
+                if 0 <= choice_index < len(valid_actions):
+                    return valid_actions[choice_index]
+                else: 
+                    print("Invalid choice.")
+            except ValueError:
+                print("Enter a valid number.")
+                
+    def get_bet_amount(self,min_amount, max_amount):
+        while True:
+            try:
+                prompt = f"Enter amount (min: {min_amount}, max: {max_amount}):"
+                amount = int(input(prompt))
+                if min_amount<= amount <= max_amount:
+                    return amount
+                else:
+                    print("Not in the valid range.")
+            except ValueError:
+                print("Please enter a valid number.")
 class aiPlayer(Player):
     def get_action(self):
         pass
