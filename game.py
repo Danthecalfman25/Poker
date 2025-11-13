@@ -210,13 +210,13 @@ class Game():
             total_bet = player.get_bet_amount(min_raise_total, max_raise_total)
 
             new_raise_amount = total_bet - self.table.current_bet
-            self.last_raise_amount - new_raise_amount
+            self.last_raise_amount = new_raise_amount
             chips_to_move = total_bet - player.bet_in_round
             player.updateChips(-chips_to_move)
             self.table.updatePot(chips_to_move)
-            player.bet_in_round += total_bet
+            player.bet_in_round = total_bet
             self.table.current_bet = player.bet_in_round
-            self.last_raiseer = player
+            self.last_raiser = player
             self.isAllIn(player)
             print(f"{player.name} raises to {total_bet}")
 
@@ -294,7 +294,7 @@ class Game():
         if len(self.active) == 1:
             winner = self.active[0]
 
-            total_winnings = sum(pot['amount'] for pot in self.table.pots)
+            total_winnings = self.table.pot
             winner.updateChips(total_winnings)
             print(f"{winner.name} wins {total_winnings}")
             self.table.pot = 0

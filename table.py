@@ -32,4 +32,5 @@ class Table():
         self.community.clear()
         self.pots.clear()
         self.total_pot = 0
+        self.pot = 0
         self.current_bet = 0

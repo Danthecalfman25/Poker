@@ -45,7 +45,9 @@ class Player():
 
 class humanPlayer(Player):
     def get_action(self, valid_actions, amount_to_call = 0, pot = 0):
-        print(f"{self.name}:\nYour Cards: {self.hand}\nCommunity Cards:{self.community}:\nAmount_to_call: {amount_to_call}   Pot:{pot}")
+        print(f"{self.name}:\nChips: {self.chips}Amount_to_call: {amount_to_call}   Pot:{pot}")
+        self.displayHand
+        self.table.display
         print("\nYour options are:")
         for i, action in enumerate(valid_actions):
             print(f"{i+1}. {action}")
@@ -73,4 +75,4 @@ class humanPlayer(Player):
                 print("Please enter a valid number.")
 class aiPlayer(Player):
     def get_action(self):
-        pass
+        raise NotImplementedError
