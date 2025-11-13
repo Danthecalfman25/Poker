@@ -45,9 +45,11 @@ class Player():
 
 class humanPlayer(Player):
     def get_action(self, valid_actions, amount_to_call = 0, pot = 0):
-        print(f"{self.name}:\nChips: {self.chips}Amount_to_call: {amount_to_call}   Pot:{pot}")
-        self.displayHand
-        self.table.display
+        print(f"--- {self.name}'s Turn ---")
+        print(f"Chips: {self.chips} | Pot: {pot} | To Call: {amount_to_call}")
+        self.displayHand()
+        print()
+        self.table.display()
         print("\nYour options are:")
         for i, action in enumerate(valid_actions):
             print(f"{i+1}. {action}")
