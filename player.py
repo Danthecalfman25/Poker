@@ -75,6 +75,8 @@ class humanPlayer(Player):
                     print("Not in the valid range.")
             except ValueError:
                 print("Please enter a valid number.")
+
+
 class aiPlayer(Player):
     def get_action(self):
         raise NotImplementedError

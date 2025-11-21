@@ -32,7 +32,7 @@ class Game():
     "Straight Flush",
     "Royal Flush"
 ]
-    
+""" 
     def play_hand(self):
         self.resetPlayers()
         self.resetGame()
@@ -61,7 +61,15 @@ class Game():
             player.total_bet = 0
             player.clear_hand()
             player.all_in = False
-
+    """
+    def step(self, action_index):
+        actions = ["fold", "check", "call", "half_raise", "3/4_raise", "pot_raise", "all-in"]
+        
+        if action_index == 3:
+            total_bet = amount_to_call + (self.table.pot//2)
+            total_bet = max(self.last_raise_amount, total_bet)
+            
+        return next_state, reward, terminated
 
     def postBlinds(self):
         sb = self.smallBlind()
