@@ -19,6 +19,7 @@ class Game():
         self.turns_taken = 0
         self.table = table
         self.last_raise_amount = 0
+        self.street = 0
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         self.hand_rankings = [
     "HighCard",
@@ -32,7 +33,7 @@ class Game():
     "Straight Flush",
     "Royal Flush"
 ]
-    
+""" 
     def play_hand(self):
         self.resetPlayers()
         self.resetGame()
@@ -61,7 +62,15 @@ class Game():
             player.total_bet = 0
             player.clear_hand()
             player.all_in = False
-
+    """
+    def step(self, action_index):
+        actions = ["fold", "check", "call", "half_raise", "3/4_raise", "pot_raise", "all-in"]
+        
+        if action_index == 3:
+            total_bet = amount_to_call + (self.table.pot//2)
+            total_bet = max(self.last_raise_amount, total_bet)
+            
+        return next_state, reward, terminated
 
     def postBlinds(self):
         sb = self.smallBlind()
@@ -103,6 +112,7 @@ class Game():
 
     def preflop(self):
         #deal 2 card to each player
+        self.street = 0
         print("Dealing:\n")
         for player in self.active:
             player.receiveCard(self.deck.deal(2))
@@ -111,6 +121,7 @@ class Game():
 
 
     def flop(self):
+        self.street = 1
         if (len(self.active) == 1):
             self.end_game()
         self.endRound()
@@ -134,6 +145,7 @@ class Game():
                 break
 
     def turn(self):
+        self.street = 2
         if (len(self.active) == 1):
             self.end_game()
         self.endRound()
@@ -143,6 +155,7 @@ class Game():
 
 
     def river(self):
+        self.street = 3
         if (len(self.active) == 1):
             self.end_game()
         self.endRound()
@@ -340,6 +353,11 @@ class Game():
             last_bet_level = min_bet
 
             eligible_players = [p for p in eligible_players if p.total_bet > min_bet]
+
+    def isButton(self, player):
+        if self.players.index(player) == self.button:
+            return 1
+        return 0
 
                 
 """
