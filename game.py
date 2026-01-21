@@ -14,8 +14,8 @@ class Game():
         self.players = []
         self.active = []
         self.button = 0
-        self.smallBlind_Bet = 0
-        self.bigBlind_Bet = 0
+        self.smallBlind_Bet = 10
+        self.bigBlind_Bet = 20
         self.current_player_index = 0
         self.current_player = None
         self.last_raiser = None
@@ -38,6 +38,9 @@ class Game():
     "Royal Flush"
 ] 
     def reset(self):
+        for player in self.players:
+            if player.chips <= 0:
+                player.chips = 1000
         self.resetPlayers()
         self.resetGame()
         self.table.reset()
@@ -129,8 +132,8 @@ class Game():
         actions = ["fold", "check", "call", "half_raise", "3/4_raise", "pot_raise", "all-in"]
 
         player= self.active[self.current_player_index]
-
-        self.execute_action(player, action)
+        starting_chips = player.chips
+        self.execute_action(action)
 
         self.incrementTurn()
 
@@ -141,8 +144,12 @@ class Game():
         if len(self.active) == 1 or self.street > 3:
             self.end_game()
             done = True
+        
+        ending_chips = player.chips
 
         reward = 0
+        if done:
+            reward = ending_chips - starting_chips
         return self.get_state(), reward, done        
         
 

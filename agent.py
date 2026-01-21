@@ -9,7 +9,7 @@ from collections import deque
 EPSILON_DECAY = .995
 EPSILON_MIN = 0.01
 GAMMA = .99
-BATCH_SIZE = 256
+BATCH_SIZE = 64
 
 
 class DQN(nn.Module):
@@ -51,6 +51,30 @@ class Agent:
             state_tensor = torch.FloatTensor(state).unsqueeze(0)
             with torch.no_grad():
                 Q_values = self.policy_net(state_tensor)
-            return Q_values.argmax().item
+            return Q_values.argmax().item()
+        
+    def optimize_model(self,):
+        if len(self.memory) < BATCH_SIZE:
+            return
+        
+        experiences = random.sample(self.memory, BATCH_SIZE)
+
+        batch_state, batch_action, batch_reward, batch_next_state, batch_done = zip(*experiences)
+        
+        state_batch = torch.FloatTensor(batch_state)
+        action_batch = torch.LongTensor(batch_action).unsqueeze(1)
+        reward_batch = torch.FloatTensor(batch_reward)
+        next_state_batch = torch.FloatTensor(batch_next_state)
+        done_batch = torch.FloatTensor(batch_done)
+
+        q_values = self.policy_net(state_batch).gather(1, action_batch)
+        prediction = self.target_net(next_state_batch).max(1)[0].detach()
+        expected_state_action_values = reward_batch + (GAMMA * prediction * (1-done_batch))
+
+        loss = F.smooth_l1_loss(q_values, expected_state_action_values.unsqueeze(1))
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
 
 
