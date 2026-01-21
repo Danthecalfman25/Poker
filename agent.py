@@ -6,10 +6,10 @@ import numpy as np
 import random
 from collections import deque
 
-EPSILON_DECAY = .995
-EPSILON_MIN = 0.01
+EPSILON_DECAY = .999995
+EPSILON_MIN = 0.05
 GAMMA = .99
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 
 
 class DQN(nn.Module):
@@ -38,8 +38,8 @@ class Agent:
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
 
-        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=0.001)
-        self.memory = deque(maxlen=10000)
+        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=0.0001)
+        self.memory = deque(maxlen=100000)
 
         self.epsilon = 1.0
         self.epsilon_min = EPSILON_MIN

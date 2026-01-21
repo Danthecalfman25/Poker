@@ -52,7 +52,7 @@ class Game():
             player.all_in = False
         self.postBlinds()
         self.preflop()
-        self.players = [p for p in self.players if p.chips > 0]
+        #self.players = [p for p in self.players if p.chips > 0]
         self.last_raiser = self.bigBlind()
         return self.get_state()
     
@@ -81,9 +81,9 @@ class Game():
             player.all_in = True
     
     def resetPlayers(self):
-        for player in self.players:
-            if player.chips == 0:
-                self.players.remove(player)
+        #for player in self.players:
+        #    if player.chips == 0:
+        #        self.players.remove(player)
         self.active = self.players[:]
     
     def resetGame(self):
@@ -151,6 +151,8 @@ class Game():
         reward = 0
         if done:
             reward = ending_chips - starting_chips
+        if action in [3, 4, 5, 6]: # Raise/All-In actions
+            reward += 5
         return self.get_state(), reward, done        
         
 
@@ -304,7 +306,8 @@ class Game():
         
  
     def incrementTurn(self):
-        self.current_player_index = (self.current_player_index + 1) % len(self.active)
+        if len(self.active) == 0:
+            return
 
     def check_for_winner(self):
         if len(self.active) == 1:
