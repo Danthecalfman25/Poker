@@ -37,10 +37,16 @@ class Agent:
 
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
-        self.optimizer = optim.Adam(self.policy_net.parameters(), lr = 0.001)
+
+        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=0.001)
         self.memory = deque(maxlen=10000)
 
         self.epsilon = 1.0
+        self.epsilon_min = EPSILON_MIN
+        self.epsilon_decay = EPSILON_DECAY
+        self.gamma = GAMMA
+        self.batch_size = BATCH_SIZE
+
 
     def select_action(self, state):
         roll = random.random()

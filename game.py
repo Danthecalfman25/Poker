@@ -53,6 +53,7 @@ class Game():
         self.postBlinds()
         self.preflop()
         self.players = [p for p in self.players if p.chips > 0]
+        self.last_raiser = self.bigBlind()
         return self.get_state()
     
     
@@ -97,11 +98,11 @@ class Game():
     def preflop(self):
         #deal 2 card to each player
         self.street = 0
-        print("Dealing:\n")
+        #print("Dealing:\n")
         for player in self.active:
             player.receiveCard(self.deck.deal(2))
-            player.displayHand()
-            print("\n")
+            #player.displayHand()
+            #print("\n")
 
 
     def flop(self):
@@ -220,7 +221,7 @@ class Game():
             self.table.current_bet = player.bet_in_round
             self.last_raiser = player
             self.isAllIn(player)
-            print(f"{player.name} bets/raises to {player.bet_in_round}")
+            #print(f"{player.name} bets/raises to {player.bet_in_round}")
         
         elif (action_type == "Raise"):
             amount_to_call = self.table.current_bet - player.bet_in_round
@@ -240,7 +241,7 @@ class Game():
             self.table.current_bet = player.bet_in_round
             self.last_raiser = player
             self.isAllIn(player)
-            print(f"{player.name} raises to {total_bet}")
+            #print(f"{player.name} raises to {total_bet}")
 
         elif (action_type == "Call"):
             amount_to_call = self.table.current_bet - player.bet_in_round
@@ -251,14 +252,14 @@ class Game():
             player.bet_in_round += chips_to_move
 
             self.isAllIn(player)
-            print(f"{player.name} calls {chips_to_move}")
+            #print(f"{player.name} calls {chips_to_move}")
 
         elif action_type == "Check":
-            print(f"{player.name} checks.")
-
+            #print(f"{player.name} checks.")
+            pass
 
         elif action_type == "Fold":
-            print(f"{player.name} folds.")
+            #print(f"{player.name} folds.")
             self.folded(player)
 
     def incrementButton(self):
@@ -297,9 +298,6 @@ class Game():
         return True
 
     def endRound(self):
-        self.last_raiser = None
-        self.turns_taken = 0
-        self.table.current_bet = 0
         for player in self.active:
             player.total_bet += player.bet_in_round
             player.bet_in_round = 0
@@ -318,7 +316,7 @@ class Game():
 
             total_winnings = self.table.pot
             winner.updateChips(total_winnings)
-            print(f"{winner.name} wins {total_winnings}")
+            #print(f"{winner.name} wins {total_winnings}")
             self.table.pot = 0
             return
         
@@ -341,7 +339,7 @@ class Game():
                 for winner in pot_winners:
                     winner.updateChips(winnings_per_player)
                     self.table.pot -= winnings_per_player
-                    print(f"{winner.name} wins {winnings_per_player} from a pot.")
+                    #print(f"{winner.name} wins {winnings_per_player} from a pot.")
             self.table.pot = 0
             
 

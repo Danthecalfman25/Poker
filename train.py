@@ -3,20 +3,27 @@ from game import Game
 from table import Table
 from player import humanPlayer 
 from agent import Agent
+
+# --- CONFIGURATION ---
 EPISODES = 1000
 STACK_SIZE = 1000
 TARGET_UPDATE = 10
 
 def main():
+    print("Setting up the table...")
     table = Table()
     game = Game(table)
+    
     Hero = humanPlayer("Hero", table)
     Villain = humanPlayer("Villain", table)
     game.players = [Hero, Villain]
+    
     initial_state = game.reset()
     input_size = len(initial_state)
-    agent = Agent(input_size, output_size = 7)
     
+    agent = Agent(input_size, output_size=7)
+    print("Agent initialized.")
+
     print("Starting training...")
     
     for episode in range(EPISODES):
@@ -28,5 +35,26 @@ def main():
         
         done = False
         while not done:
-            pass
+            
+            action = agent.select_action(state)
 
+            next_state, reward, done = game.step(action)
+            
+            agent.memory.append((state, action, reward, next_state, done))
+
+            agent.optimize_model()
+
+            state = next_state
+
+        
+        if episode % TARGET_UPDATE == 0:
+            agent.target_net.load_state_dict(agent.policy_net.state_dict())
+
+        if agent.epsilon > agent.epsilon_min:
+            agent.epsilon *= agent.epsilon_decay
+
+        if episode % 50 == 0:
+            print(f"Episode {episode}/{EPISODES} completed. Epsilon: {agent.epsilon:.3f}")
+
+if __name__ == "__main__":
+    main()
