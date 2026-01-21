@@ -114,7 +114,7 @@ class Game():
         self.table.display()
         self.table.displayPot()
 
-    def bettingRound(self, stage):
+    """def bettingRound(self, stage):
         self.last_raise_amount = self.bigBlind_Bet
         if stage == "Preflop":
             self.current_player_index = self.UTG_index()
@@ -128,6 +128,7 @@ class Game():
             self.incrementTurn()
             if self.check_endRound():
                 break
+                """
 
     def step(self, action):
         actions = ["fold", "check", "call", "half_raise", "3/4_raise", "pot_raise", "all-in"]
@@ -314,36 +315,39 @@ class Game():
             self.end_game()
         
     def end_game(self):
+        # CASE 1: Everyone else folded (One player left)
         if len(self.active) == 1:
             winner = self.active[0]
-
-            total_winnings = self.table.pot
-            winner.updateChips(total_winnings)
-            #print(f"{winner.name} wins {total_winnings}")
+            winner.updateChips(self.table.pot)
             self.table.pot = 0
             return
         
-        for pot in self.table.pots:
-            pot_winners = []
-            best_hand_in_pot = (-1,)
+        # CASE 2: Showdown (Compare Hands)
+        # 1. Calculate everyone's hand strength
+        self.showdown()
 
-            for eligible_player in pot['eligible_players']:
-                if eligible_player in self.active:
-                    if eligible_player.final_hand > best_hand_in_pot:
-                        best_hand_in_pot = eligible_player.final_hand
-                        pot_winners.clear()
-                        pot_winners.append(eligible_player)
-                    elif eligible_player.final_hand == best_hand_in_pot:
-                        pot_winners.append(eligible_player)
-                
-            if len(pot_winners) > 0:
-                winnings_per_player = pot['amount'] // len(pot_winners)
+        # 2. Find the winner(s)
+        best_hand = (-1,)
+        winners = []
 
-                for winner in pot_winners:
-                    winner.updateChips(winnings_per_player)
-                    self.table.pot -= winnings_per_player
-                    #print(f"{winner.name} wins {winnings_per_player} from a pot.")
-            self.table.pot = 0
+        for player in self.active:
+            # Check if this player beats the current best
+            if player.final_hand > best_hand:
+                best_hand = player.final_hand
+                winners = [player] # New single winner
+            # Check for a tie (Split pot)
+            elif player.final_hand == best_hand:
+                winners.append(player)
+        
+        # 3. Pay the winner(s)
+        if len(winners) > 0:
+            # Integer division for split pots
+            win_amount = self.table.pot // len(winners)
+            for w in winners:
+                w.updateChips(win_amount)
+        
+        # 4. Clear the pot
+        self.table.pot = 0
             
 
     def compute_pots(self):
