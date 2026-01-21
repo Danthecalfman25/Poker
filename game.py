@@ -1,13 +1,16 @@
 from deck import *
 from card import *
-from player import *
-from table import *
+from player import Player
+from player import humanPlayer
+from player import aiPlayer
+from table import Table
+from hand_detection import Hand_Detection
 
 
 class Game():
     def __init__(self, table):
         self.deck = Deck()
-        self.judge = Hand_Detection()
+        self.judge: "Hand_Detection" = Hand_Detection()
         self.players = []
         self.active = []
         self.button = 0
@@ -17,10 +20,11 @@ class Game():
         self.current_player = None
         self.last_raiser = None
         self.turns_taken = 0
-        self.table = table
+        self.table: "Table" = table
         self.last_raise_amount = 0
         self.street = 0
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        self.suits = ['H', 'S', 'D', 'C']
         self.hand_rankings = [
     "HighCard",
     "Pair",
@@ -32,46 +36,23 @@ class Game():
     "Four of a Kind",
     "Straight Flush",
     "Royal Flush"
-]
-""" 
-    def play_hand(self):
+] 
+    def reset(self):
         self.resetPlayers()
         self.resetGame()
         self.table.reset()
         self.deck = Deck()
         self.deck.shuffle()
-        self.postBlinds()
-
-        self.preflop()
-        if self.bettingRound("Preflop"):
-            return
-        self.flop()
-        if self.bettingRound("Flop"):
-            return
-        self.turn()
-        if self.bettingRound("Turn"):
-            return
-        self.river()
-        if self.bettingRound("River"):
-            return
-        self.compute_pots()
-        self.showdown()
-        self.end_game()
-        self.players = [p for p in self.players if p.chips > 0]
         for player in self.players:
             player.total_bet = 0
             player.clear_hand()
             player.all_in = False
-    """
-    def step(self, action_index):
-        actions = ["fold", "check", "call", "half_raise", "3/4_raise", "pot_raise", "all-in"]
-        
-        if action_index == 3:
-            total_bet = amount_to_call + (self.table.pot//2)
-            total_bet = max(self.last_raise_amount, total_bet)
-            
-        return next_state, reward, terminated
-
+        self.postBlinds()
+        self.preflop()
+        self.players = [p for p in self.players if p.chips > 0]
+        #retrun self.get_state()
+    
+    
     def postBlinds(self):
         sb = self.smallBlind()
         sbet = min (sb.chips, self.smallBlind_Bet)
@@ -143,6 +124,27 @@ class Game():
             self.incrementTurn()
             if self.check_endRound():
                 break
+
+    def step(self, action):
+        actions = ["fold", "check", "call", "half_raise", "3/4_raise", "pot_raise", "all-in"]
+
+        player= self.active[self.current_player_index]
+
+        self.execute_action(player, action)
+
+        self.incrementTurn()
+
+        if self.check_endRound():
+            self.advance_street()
+        
+        done = False
+        if len(self.active) == 1 or self.street > 3:
+            self.end_game()
+            done = True
+
+        reward = 0
+        return self.get_state(), reward, done        
+        
 
     def turn(self):
         self.street = 2
@@ -358,49 +360,152 @@ class Game():
         if self.players.index(player) == self.button:
             return 1
         return 0
-
-                
-"""
-def playerTurn(self, player):
-        if player.all_in == True:
-            return
-        self.turns_taken += 1
-        valid_actions = []
-        if self.table.current_bet > player.bet_in_round:
-
-            valid_actions.append ("Fold")
-            valid_actions.append("Call")
-            if player.chips > (self.table.current_bet - player.bet_in_round):
-                valid_actions.append("Raise")
-        else:
-            valid_actions.append("Check")
-
-            if player.chips > 0:
-                valid_actions.append("Bet")
+    
+    def advance_street(self):
+        self.street += 1
         
-        max_bet = player.chips
-        min_bet = self.bigBlind_Bet
-        min_raise = self.table.current_bet + self.last_raise_amount
-        amount_to_call =self.table.current_bet - player.bet_in_round
+        if self.street == 1:
+            self.flop()
+        elif self.street == 2:
+            self.turn()
+        elif self.street == 3:
+            self.river()
+    
+    def execute_action(self, action):
+        player: "Player" = self.active[self.current_player_index]
+        amount_to_call = self.table.current_bet - player.bet_in_round
 
-        action = player.get_action(valid_actions, min_bet, min_raise, max_bet)
-        action_type = action[0]
-                
-        if (action_type == "Bet" or action_type == "Raise"):
-            total_bet = action[1]
-
-            amount_to_add = total_bet - player.bet_in_round
-            self.last_raise_amount = total_bet - self.table.current_bet
-            player.updateChips(-amount_to_add)
-            self.table.updatePot(amount_to_add)
-            player.bet_in_round = total_bet
-
-            self.table.current_bet = player.bet_in_round
-            self.last_raiser = player
-            self.isAllIn(player)
-            print(f"{player.name} bets/raises to {player.bet_in_round}")
+        if action == 0:
+            self.folded(player)
             
-        elif (action_type == "Call"):
-            amount_to_call = self.table.current_bet - player.bet_in_round
+        
+        elif action == 1 and amount_to_call > 0:
+            self.folded(player)
+        
+        elif action == 2:
+            bet = min(player.chips, amount_to_call)
+            player.updateChips(-bet)
+            player.bet_in_round += bet
+            self.table.updatePot(bet)
+            self.isAllIn(player)
 
-"""
+        elif action == 3:
+            raise_amount = int(self.table.pot * 0.5)
+            raise_amount = max(raise_amount, self.last_raise_amount)
+            
+            total_cost = raise_amount + amount_to_call
+            
+            if total_cost >= player.chips:
+                total_cost = player.chips 
+                player.all_in = True
+                
+                actual_raise = total_cost - amount_to_call
+                
+                if actual_raise > 0:
+                    self.last_raise_amount = actual_raise
+                    self.last_raiser = player
+                    self.table.current_bet = player.bet_in_round + total_cost
+            
+            else:
+                self.last_raise_amount = raise_amount
+                self.last_raiser = player
+                self.table.current_bet = player.bet_in_round + total_cost
+
+            player.updateChips(-total_cost)
+            player.bet_in_round += total_cost
+            self.table.updatePot(total_cost)
+
+        elif action == 4:
+            raise_amount = int(self.table.pot * 0.75)
+            raise_amount = max(raise_amount, self.last_raise_amount)
+            
+            total_cost = raise_amount + amount_to_call
+            
+            if total_cost >= player.chips:
+                total_cost = player.chips 
+                player.all_in = True
+                
+                actual_raise = total_cost - amount_to_call
+                
+                if actual_raise > 0:
+                    self.last_raise_amount = actual_raise
+                    self.last_raiser = player
+                    self.table.current_bet = player.bet_in_round + total_cost
+            
+            else:
+                self.last_raise_amount = raise_amount
+                self.last_raiser = player
+                self.table.current_bet = player.bet_in_round + total_cost
+
+            player.updateChips(-total_cost)
+            player.bet_in_round += total_cost
+            self.table.updatePot(total_cost)
+
+        elif action == 5:
+            raise_amount = int(self.table.pot)
+            raise_amount = max(raise_amount, self.last_raise_amount)
+            
+            total_cost = raise_amount + amount_to_call
+            
+            if total_cost >= player.chips:
+                total_cost = player.chips 
+                player.all_in = True
+                
+                actual_raise = total_cost - amount_to_call
+                
+                if actual_raise > 0:
+                    self.last_raise_amount = actual_raise
+                    self.last_raiser = player
+                    self.table.current_bet = player.bet_in_round + total_cost
+            
+            else:
+                self.last_raise_amount = raise_amount
+                self.last_raiser = player
+                self.table.current_bet = player.bet_in_round + total_cost
+
+            player.updateChips(-total_cost)
+            player.bet_in_round += total_cost
+            self.table.updatePot(total_cost)
+        elif action == 6:
+            bet = player.chips
+            player.updateChips(-bet)
+            player.bet_in_round += bet
+            self.table.updatePot(bet)
+            player.all_in = True
+
+            if player.bet_in_round > self.table.current_bet:
+                raise_size = player.bet_in_round - self.table.current_bet
+                self.last_raise_amount = raise_size
+                self.last_raiser = player
+                self.table.current_bet = player.bet_in_round
+                
+    def get_state(self):
+        hero = self.active[self.current_player_index]
+        villain_index = (self.current_player_index + 1) % len(self.active)
+        villain = self.active[villain_index]
+
+        state = []
+
+        for card in hero.hand:
+            rank_val = self.ranks.index(card.rank) / 12.0 
+            suit_val = self.suits.index(card.suit) / 3.0
+            state.extend([rank_val, suit_val])
+
+        for i in range(5):
+            if i < len(self.table.community):
+                card = self.table.community[i]
+                rank_val = self.ranks.index(card.rank) / 12.0
+                suit_val = self.suits.index(card.suit) / 3.0
+                state.extend([rank_val, suit_val])
+            else:
+                state.extend([-1.0, -1.0])
+
+        MAX_CHIPS = 1000.0 
+        
+        state.append(hero.chips / MAX_CHIPS)
+        state.append(villain.chips / MAX_CHIPS)
+        state.append(self.table.pot / MAX_CHIPS)
+        state.append(self.table.current_bet / MAX_CHIPS)
+        state.append(self.street / 4.0)
+
+        return state
