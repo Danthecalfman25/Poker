@@ -50,7 +50,7 @@ class Game():
         self.postBlinds()
         self.preflop()
         self.players = [p for p in self.players if p.chips > 0]
-        #retrun self.get_state()
+        return self.get_state()
     
     
     def postBlinds(self):
