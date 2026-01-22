@@ -28,8 +28,8 @@ def main():
     best_profit = -float('inf')
     
     for episode in range(EPISODES):
-        for p in game.players:
-            if p.chips <= 0:
+        if game.players[0].chips <= 0 or game.players[1].chips <= 0:
+            for p in game.players:
                 p.chips = STACK_SIZE
 
         state = game.reset()

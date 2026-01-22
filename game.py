@@ -183,6 +183,8 @@ class Game():
         state.append(self.isButton(hero)) 
         state.append(hero.bet_in_round / MAX_CHIPS)
         state.append(villain.bet_in_round / MAX_CHIPS)
+        amount_to_call = self.table.current_bet - hero.bet_in_round
+        state.append(amount_to_call / MAX_CHIPS)
 
         return state
 

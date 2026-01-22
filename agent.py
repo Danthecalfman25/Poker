@@ -6,7 +6,7 @@ import numpy as np
 import random
 from collections import deque
 
-EPSILON_DECAY = 0.999
+EPSILON_DECAY = 0.99995
 EPSILON_MIN = 0.05
 GAMMA = 0.99
 BATCH_SIZE = 128
