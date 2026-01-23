@@ -293,11 +293,16 @@ class Game():
     
     
     def check_endRound(self):
-        if (self.current_player != self.last_raiser): return False
+        active_player = self.active[self.current_player_index]
+        
+        if active_player != self.last_raiser: 
+            return False
+            
         for player in self.active:
-            if self.current_player.bet_in_round != player.bet_in_round:
+            if active_player.bet_in_round != player.bet_in_round:
                 if player.all_in: continue
                 return False
+                
         return True
 
     def endRound(self):
