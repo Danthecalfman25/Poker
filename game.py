@@ -32,14 +32,29 @@ class Game():
 
     def get_valid_actions(self):
         player = self.active[self.current_player_index]
+        opponent = self.players[1 - self.current_player_index]
         amount_to_call = self.table.current_bet - player.bet_in_round
 
         valid = [0] * 7
+
+        if player.chips <= 0:
+            valid[1] = 1
+            return valid
+        
+        if opponent.chips <= 0:
+            valid[0] = 1
+
+            if amount_to_call == 0:
+                valid[1] = 1
+            else:
+                valid[2] = 1
+            
+            return valid
         
         valid[0] = 1
 
         if amount_to_call == 0:
-            valid[1] = 1
+                valid[1] = 1
         else:
             valid[2] = 1
 
@@ -52,6 +67,27 @@ class Game():
             valid[6] = 1
             
         return valid
+    
+    def render(self):
+        street_names = {0: "Pre-Flop", 1: "Flop", 2: "Turn", 3: "River"}
+        street_name = street_names.get(self.street, "Unknown")
+
+        community = [card.display() for card in self.table.community]
+        print(f"STREET: {street_name} | POT: {self.table.pot} | BET: {self.table.current_bet}")
+        print(f"BOARD:  {community}")
+
+        for player in self.players:
+            if self.isButton(player):
+                button = "D"
+            else:
+                button = " "
+
+            status = ""
+            if player.all_in: status = "(ALL-IN)"
+            
+            
+            print(f"{button}: {player.name}, {player.chips} chips, {status}")
+            player.displayHand()
 
     def reset(self):
         for player in self.players:
@@ -237,12 +273,24 @@ class Game():
         if self.current_player_index >= len(self.active):
             self.current_player_index = 0
     
-    def UTG(self): return self.players[(self.button + 3) % len(self.players)]
-    def bigBlind(self): return self.players[(self.button + 2) % len(self.players)]
-    def smallBlind(self): return self.players[(self.button + 1) % len(self.players)]
-    def UTG_index(self): return (self.button + 3) % len(self.players)
-    def bigBlind_index(self): return (self.button + 2) % len(self.players)
-    def smallBlind_index(self): return (self.button + 1) % len(self.players)
+    def UTG(self): 
+        return self.players[(self.button + 3) % len(self.players)]
+    
+    def bigBlind(self): 
+        return self.players[(self.button + 2) % len(self.players)]
+    
+    def smallBlind(self): 
+        return self.players[(self.button + 1) % len(self.players)]
+    
+    def UTG_index(self): 
+        return (self.button + 3) % len(self.players)
+    
+    def bigBlind_index(self): 
+        return (self.button + 2) % len(self.players)
+    
+    def smallBlind_index(self): 
+        return (self.button + 1) % len(self.players)
+    
     
     def check_endRound(self):
         if (self.current_player != self.last_raiser): return False
