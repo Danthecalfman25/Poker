@@ -28,8 +28,8 @@ class Hand_Detection():
 
     def HighCard(self):
         self.total_hand.sort(reverse= True)
-        return ("HighCard",) + tuple(self.total_hand[i] for i in range(0,5))
-
+        return ("HighCard",) + tuple(self.total_hand[i].rank for i in range(0,5))
+    
     def isPair(self):
         high_pair = None
         for i in range(len(self.total_hand)):
@@ -63,7 +63,7 @@ class Hand_Detection():
                 hand.append(card)
         hand.sort(reverse=True)
         if len(pairs) >= 2:
-            return ("Two Pair", pairs[0].rank, pairs[1].rank) + tuple(hand[0].rank,)
+            return ("Two Pair", pairs[0].rank, pairs[1].rank) + (hand[0].rank,)
         return False
     
     def isTrips(self):

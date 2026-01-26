@@ -17,10 +17,10 @@ class Game():
         self.smallBlind_Bet = 10
         self.bigBlind_Bet = 20
         self.current_player_index = 0
-        self.current_player = None
-        self.last_raiser = None
+        self.current_player: "Player" = None
+        self.last_raiser: "Player" = None
         self.turns_taken = 0
-        self.table = table
+        self.table: "Table" = table
         self.last_raise_amount = 0
         self.street = 0
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -72,9 +72,10 @@ class Game():
         street_names = {0: "Pre-Flop", 1: "Flop", 2: "Turn", 3: "River"}
         street_name = street_names.get(self.street, "Unknown")
 
-        community = [card.display() for card in self.table.community]
+        community_str = " ".join([str(c) for c in self.table.community])
         print(f"STREET: {street_name} | POT: {self.table.pot} | BET: {self.table.current_bet}")
-        print(f"BOARD:  {community}")
+        print(f"BOARD:  [{community_str}]")
+        self.table.display()
 
         for player in self.players:
             if self.isButton(player):
@@ -309,6 +310,13 @@ class Game():
         for player in self.active:
             player.total_bet += player.bet_in_round
             player.bet_in_round = 0
+        
+        self.table.current_bet = 0
+        self.last_raise_amount = 0
+
+        if self.players and self.active:
+            self.last_raiser = self.players[self.button]
+
  
     def incrementTurn(self):
         if len(self.active) == 0: return
