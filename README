@@ -1,4 +1,4 @@
-###PokerRL: Deep Q-Network Agent for Texas Hold'em
+### PokerRL: Deep Q-Network Agent for Texas Hold'em
 A reinforcement learning project that trains an autonomous agent to play No-Limit Texas Hold'em using PyTorch and a custom-built poker environment.
 
 The agent utilizes a Deep Q-Network (DQN) with Experience Replay to approximate optimal strategies. The project demonstrates advanced RL concepts, including Curriculum Learning and Self-Play, to overcome the non-transitive dynamics of poker.
@@ -21,7 +21,7 @@ Architecture: Deep Q-Network (Linear layers with Leaky ReLU activations)
 
 Optimization: Adam Optimizer, Epsilon-Greedy Exploration
 
-###Milestones
+### Milestones
 
 Milestone 1:
 Create Poker engine
