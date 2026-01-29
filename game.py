@@ -26,8 +26,16 @@ class Game():
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         self.suits = ['H', 'S', 'D', 'C']
         self.hand_rankings = [
-            "HighCard", "Pair", "Two Pair", "Trips", "Straight", 
-            "Flush", "Full House", "Four of a Kind", "Straight Flush", "Royal Flush"
+            "HighCard", 
+            "Pair", 
+            "Two Pair", 
+            "Trips", 
+            "Straight", 
+            "Flush", 
+            "Full House", 
+            "Quads",          
+            "StraightFlush",
+            "RoyalFlush"   
         ]
 
     def get_valid_actions(self):
@@ -201,15 +209,24 @@ class Game():
 
         state = []
 
+
         for card in hero.hand:
-            state.extend([self.ranks.index(card.rank) / 12.0, self.suits.index(card.suit) / 3.0])
+            state.append(self.ranks.index(card.rank) / 12.0)
+            suit_encoding = [0, 0, 0, 0]
+            suit_encoding[self.suits.index(card.suit)] = 1
+            state.extend(suit_encoding)
+
+
 
         for i in range(5):
             if i < len(self.table.community):
                 card = self.table.community[i]
-                state.extend([self.ranks.index(card.rank) / 12.0, self.suits.index(card.suit) / 3.0])
+                state.append(self.ranks.index(card.rank) / 12.0)
+                suit_encoding = [0, 0, 0, 0]
+                suit_encoding[self.suits.index(card.suit)] = 1
+                state.extend(suit_encoding)
             else:
-                state.extend([-1.0, -1.0])
+                state.extend([-1.0, 0, 0, 0, 0])
 
         state.append(hero.chips / MAX_CHIPS)
         state.append(villain.chips / MAX_CHIPS)
