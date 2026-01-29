@@ -25,8 +25,10 @@ class DQN(nn.Module):
 
 class Agent:
     def __init__(self, input_size, output_size):
-        self.policy_net = DQN(input_size, output_size)
-        self.target_net = DQN(input_size, output_size)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Agent running on: {self.device}")
+        self.policy_net = DQN(input_size, output_size).to(self.device)
+        self.target_net = DQN(input_size, output_size).to(self.device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
 
@@ -45,11 +47,11 @@ class Agent:
             if not choices: return 0
             return random.choice(choices)
         else:
-            state_tensor = torch.FloatTensor(state).unsqueeze(0)
+            state_tensor = torch.tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
             with torch.no_grad():
                 q_values = self.policy_net(state_tensor)
                 
-            mask = torch.tensor(valid_actions, dtype=torch.bool)
+            mask = torch.tensor(valid_actions, dtype=torch.bool, device=self.device)
             q_values[0, ~mask] = -1e9
             
             return q_values.argmax().item()
@@ -61,11 +63,11 @@ class Agent:
         experiences = random.sample(self.memory, BATCH_SIZE)
         batch_state, batch_action, batch_reward, batch_next_state, batch_done = zip(*experiences)
         
-        state_batch = torch.FloatTensor(batch_state)
-        action_batch = torch.LongTensor(batch_action).unsqueeze(1)
-        reward_batch = torch.FloatTensor(batch_reward)
-        next_state_batch = torch.FloatTensor(batch_next_state)
-        done_batch = torch.FloatTensor(batch_done)
+        state_batch = torch.tensor(batch_state, dtype=torch.float32, device=self.device)
+        action_batch = torch.tensor(batch_action, dtype=torch.long, device=self.device).unsqueeze(1)
+        reward_batch = torch.tensor(batch_reward, dtype=torch.float32, device=self.device)
+        next_state_batch = torch.tensor(batch_next_state, dtype=torch.float32, device=self.device)
+        done_batch = torch.tensor(batch_done, dtype=torch.float32, device=self.device)
 
         q_values = self.policy_net(state_batch).gather(1, action_batch)
         prediction = self.target_net(next_state_batch).max(1)[0].detach()
