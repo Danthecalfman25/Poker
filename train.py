@@ -5,9 +5,11 @@ from player import humanPlayer
 from agent import Agent
 import random
 from calling_station import calling_station_action
-EPISODES = 200000
+episode_start = 150000
+EPISODES = 20000
 STACK_SIZE = 1000
 TARGET_UPDATE = 1000
+RESUME_FILE_PATH = "poker_agent_150000.pth"
 
 def main():
     print("Setting up the table...")
@@ -22,10 +24,23 @@ def main():
     input_size = len(initial_state) 
     print(f"State Size: {input_size}")
     
-    agent = Agent(input_size, output_size=7)
+    agent = Agent(input_size=44, output_size=7)
 
-    agent.epsilon = 1.0
-    agent.epsilon_decay = 0.9999
+    try:
+        
+        saved_weights = torch.load("poker_agent_150000.pth")
+        
+        agent.policy_net.load_state_dict(saved_weights)
+        agent.target_net.load_state_dict(saved_weights)
+        
+        agent.epsilon = 0.2
+        
+        start_episode = 150000
+        print(f">>> SUCCESS: Resuming from Episode {start_episode}")
+
+    except FileNotFoundError:
+        print(">>> WARNING: Save file not found. Starting from scratch.")
+        start_episode = 0
 
     print("Starting Training...")
     print("PHASE 1")
@@ -33,7 +48,7 @@ def main():
     total_profit = 0
     best_profit = -float('inf')
     
-    for episode in range(EPISODES):
+    for episode in range(start_episode, EPISODES):
         if game.players[0].chips <= 0 or game.players[1].chips <= 0:
             for p in game.players:
                 p.chips = STACK_SIZE
