@@ -32,6 +32,10 @@ Make the Poker engine a valid environment for DQN
 Milestone 3:
 Self-play
 
+After self play, the bot was way to over agressive.  It would often go all in preflop and try to get the opponant to fold.  This,k combined with the one hot encoding for the suits, made me want to start training from scratch.  I trained it first on a calling station so it could quickly learn the hand strengths and to not bluff, then i transitioned to mixed training so it would self play or play against the calling station randomly.
+
+The bot is still too agressive.  I am going to train it more using the same strategy.
+
 Milestone 4:
 Make the bot able to beat a rule-based bot
 

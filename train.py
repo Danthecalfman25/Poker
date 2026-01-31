@@ -5,11 +5,10 @@ from player import humanPlayer
 from agent import Agent
 import random
 from calling_station import calling_station_action
-episode_start = 150000
-EPISODES = 20000
+EPISODES = 300000
 STACK_SIZE = 1000
 TARGET_UPDATE = 1000
-RESUME_FILE_PATH = "poker_agent_150000.pth"
+RESUME_FILE_PATH = "poker_agent_final.pth"
 
 def main():
     print("Setting up the table...")
@@ -28,14 +27,14 @@ def main():
 
     try:
         
-        saved_weights = torch.load("poker_agent_150000.pth")
+        saved_weights = torch.load(RESUME_FILE_PATH)
         
         agent.policy_net.load_state_dict(saved_weights)
         agent.target_net.load_state_dict(saved_weights)
         
         agent.epsilon = 0.2
         
-        start_episode = 150000
+        start_episode = 200001
         print(f">>> SUCCESS: Resuming from Episode {start_episode}")
 
     except FileNotFoundError:
