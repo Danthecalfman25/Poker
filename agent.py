@@ -9,7 +9,7 @@ from collections import deque
 EPSILON_DECAY = 0.9999
 EPSILON_MIN = 0.05
 GAMMA = 0.99
-BATCH_SIZE = 128
+BATCH_SIZE = 1024
 
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
@@ -66,12 +66,21 @@ class Agent:
         state_batch = torch.tensor(batch_state, dtype=torch.float32, device=self.device)
         action_batch = torch.tensor(batch_action, dtype=torch.long, device=self.device).unsqueeze(1)
         reward_batch = torch.tensor(batch_reward, dtype=torch.float32, device=self.device)
-        next_state_batch = torch.tensor(batch_next_state, dtype=torch.float32, device=self.device)
-        done_batch = torch.tensor(batch_done, dtype=torch.float32, device=self.device)
+
+        non_final_mask = torch.tensor([s is not None for s in batch_next_state], device=self.device, dtype=torch.bool)
+        non_final_next_states_list = [s for s in batch_next_state if s is not None]
+
+        if len(non_final_next_states_list) > 0:
+            non_final_next_states = torch.tensor(non_final_next_states_list, dtype=torch.float32, device=self.device)
+        else:
+            non_final_next_states = torch.empty(0, device=self.device)
+        next_state_values = torch.zeros(BATCH_SIZE, device=self.device)
+        if len(non_final_next_states) > 0:
+            next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1)[0].detach()
+
+        expected_state_action_values = reward_batch + (next_state_values * self.gamma)
 
         q_values = self.policy_net(state_batch).gather(1, action_batch)
-        prediction = self.target_net(next_state_batch).max(1)[0].detach()
-        expected_state_action_values = reward_batch + (GAMMA * prediction * (1-done_batch))
 
         loss = F.smooth_l1_loss(q_values, expected_state_action_values.unsqueeze(1))
         self.optimizer.zero_grad()
